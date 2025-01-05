@@ -355,7 +355,7 @@ function onEdit(e) {
         errorMsgIn.setBackground("#f6b26b");
         return;
 
-      case "F16": //red out
+      case "F16": //green in
         activeCell.setValue(false);
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
@@ -507,12 +507,11 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   expenseNoteType.setValue("N/A");
   newExpenseNoteType.clearContent();
   expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
-  // expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInRange(specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1), true).build());
 
   return;
 }
 
-//adds in val to chosen cell given parameters 
+//adds in val to chosen cell given parameters
 function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet){
 
   var today = new Date();
@@ -545,14 +544,10 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
   Logger.log(addRowSpec + " " + addColSpec + " " + dropdownArr);
 
-  //fixedOrNot as placeholder for needOrWantOrReimb as reimb is ignored in this function
-  //noteToSheets(typeSheet, addRow, addCol, fixedOrNot);
-
   //clear new income type cell & revalidate incomenotetype dropdown list
   incomeNoteType.setValue("N/A");
   newIncomeNoteType.clearContent();
   incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
-  //incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInRange(typeSheet.getRange(rowThatDropdownSheetStarts, colWithExpTypeNames, typeSheet.getLastRow() - rowThatDropdownSheetStarts - 1, 1), true).build());
 
   return;
 }
