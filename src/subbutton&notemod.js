@@ -474,15 +474,17 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   var addCol;
   var addColSpec; //for dropdown list
   var expenseTypeVal = expenseType.getValue();
+  var needOrWantOrReimbVal = needOrWantOrReimb.getValue();
+  if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES
   if (checkOrRes.getValue() == "RES") {
-    if (needOrWantOrReimb != "REIMB") {
+    if (needOrWantOrReimb != "REIMB OUT") {
       needOrWantOrReimb.setBackground("#999999");
       addCol = findAddCol(typeSheet, expenseTypeVal, "OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "OUT", "RES", "spec") + 3; //by default settles on date col
     }
-    else if (needOrWantOrReimb == "REIMB") {
+    else if (needOrWantOrReimb == "REIMB OUT") {
       addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
     }
@@ -492,8 +494,9 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   //CHECK
   else {
     needOrWantOrReimb.setBackground("#cccccc");
-    var needOrWantOrReimbVal = needOrWantOrReimb.getValue();
-    if (needOrWantOrReimbVal == "REIMB") expenseType.setBackground("#999999");
+    if (needOrWantOrReimbVal == "REIMB OUT") {
+      expenseType.setBackground("#999999");
+    }
     else expenseType.setBackground("#cccccc");
 
     //find col of targetted cell given N/W/R & exp type
@@ -502,7 +505,7 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
 
     //add daily val given it isn't reimb (daily expenses that is)
     var curDailyVal = dayVal.getValue();
-    if (needOrWantOrReimbVal != "REIMB") dayVal.setValue("=" + curDailyVal + "+" + amount.getValue());
+    if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amount.getValue());
   }
   Logger.log(addRow + " " + addCol);
   addMoney(addRow, addCol, amount.getValue(), typeSheet);
