@@ -429,6 +429,7 @@ function onEdit(e) {
   colWithReimbMark = 39, //for notes
   resFixedCol = 4,
   resNonFixedCol = 5,
+  resReimbInCol = 6,
   checkInCol = 7,
   checkReimbInCol = 8,
   resOutCol = 9,
@@ -440,9 +441,11 @@ function onEdit(e) {
   checkReimbOutCol = 23,
   resFixedColSpec = 3,
   resNonFixedColSpec = 8,
-  resReimbInSpec = 13,
+  resReimbInColSpec = 13,
   checkInColSpec = 18,
   checkReimbInColSpec = 23,
+  resOutColSpec = 28,
+  resReimbOutColSpec = 33,
   needStartSpec = 39,
   needEndSpec = 68,
   wantStartSpec = 69,
@@ -457,15 +460,19 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   const today = new Date();
   var addRow = findAddRow(typeSheet, today);
   var addCol;
+  var addColSpec; //for dropdown list
+  var expenseTypeVal = expenseType.getValue();
 
   //RES
   if (checkOrRes.getValue() == "RES") {
     if (needOrWantOrReimb != "REIMB") {
       needOrWantOrReimb.setBackground("#999999");
-      addCol = resOutCol;
+      addCol = findAddCol(typeSheet, expenseTypeVal, "OUT", "RES", "type");
+      addColSpec = findAddCol(specSheet, expenseTypeVal, "OUT", "RES", "spec") + 3; //by default settles on date col
     }
     else if (needOrWantOrReimb == "REIMB") {
-      addCol = resReimbOutCol;
+      addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
+      addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
     }
     expenseType.setBackground("#999999");
   }
@@ -473,15 +480,17 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   //CHECK
   else {
     needOrWantOrReimb.setBackground("#cccccc");
-    if (needOrWantOrReimb.getValue() == "REIMB") expenseType.setBackground("#999999");
+    var needOrWantOrReimbVal = needOrWantOrReimb.getValue();
+    if (needOrWantOrReimbVal == "REIMB") expenseType.setBackground("#999999");
     else expenseType.setBackground("#cccccc");
 
     //find col of targetted cell given N/W/R & exp type
-    addCol = findAddCol(typeSheet, expenseType.getValue(), needOrWantOrReimb.getValue(), "type");
+    addCol = findAddCol(typeSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "type");
+    addColSpec = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec") + 3; //by default settles on date col
 
     //add daily val given it isn't reimb (daily expenses that is)
     var curDailyVal = dayVal.getValue();
-    if (needOrWantOrReimb.getValue() != "REIMB") dayVal.setValue("=" + curDailyVal + "+" + amount.getValue());
+    if (needOrWantOrReimbVal != "REIMB") dayVal.setValue("=" + curDailyVal + "+" + amount.getValue());
   }
   Logger.log(addRow + " " + addCol);
   addMoney(addRow, addCol, amount.getValue(), typeSheet);
@@ -490,7 +499,6 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   var rangeArr = findSpecMonthRange(hideSheet, today, 5);
   var addRowSpec = rangeArr[0];
   var addRowSpecLen = rangeArr[2];
-  var addColSpec = findAddCol(specSheet, expenseType.getValue(), needOrWantOrReimb.getValue(), "spec") + 3; //by default settles on date col
   var dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
   Logger.log(addRowSpec + " " + addColSpec + " " + dropdownArr);
@@ -510,23 +518,21 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
   var today = new Date();
   var addRow = findAddRow(typeSheet, today);
   var addCol;
+  var addColSpec; //for dropdown list
+  var fixedOrNotVal = fixedOrNot.getValue();
 
   //CHECK
   if (checkOrRes.getValue() == "CHECK") {
-    addCol = checkInCol;
+    addCol = findAddCol(typeSheet, null, "IN", "CHECK", "type");
+    addColSpec = findAddCol(typeSheet, null, "IN", "CHECK", "spec") + 3;
     fixedOrNot.setBackground("#999999");
   }
 
   //RES
   else {
     fixedOrNot.setBackground("#cccccc");
-    if (fixedOrNot.getValue() == "FIXED") {
-      addCol = resFixedCol;
-    }
-    //NON-FIXED
-    else {
-      addCol = resNonFixedCol;
-    }
+    addCol = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "type");
+    addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
   addMoney(addRow, addCol, amount, typeSheet); // adds amount to curr eqn
@@ -535,14 +541,13 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
   var rangeArr = findSpecMonthRange(hideSheet, today, 5);
   var addRowSpec = rangeArr[0];
   var addRowSpecLen = rangeArr[2];
-  var addColSpec = findAddCol(specSheet, null, fixedOrNot.getValue(), "spec") + 3; //expensetype ignored in this function
   var dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
   Logger.log(addRowSpec + " " + addColSpec + " " + dropdownArr);
-  
+
   //fixedOrNot as placeholder for needOrWantOrReimb as reimb is ignored in this function
   //noteToSheets(typeSheet, addRow, addCol, fixedOrNot);
-  
+
   //clear new income type cell & revalidate incomenotetype dropdown list
   incomeNoteType.setValue("N/A");
   newIncomeNoteType.clearContent();
@@ -674,32 +679,64 @@ function addMoney(addRow, addCol, amount, typeSheet){
 
 
 //find appropiate col given need/want and expense type & sheet type (specific or normal)
-function findAddCol(sheet, expenseType, needOrWantOrReimbOrFixedOrNot, typeOrSpec) {
+function findAddCol(sheet, expenseType, colCases, checkOrRes, typeOrSpec) {
   var addCol;
-  switch (needOrWantOrReimbOrFixedOrNot) {
-    case "NEED":
-      if (typeOrSpec == "type") addCol = needWantLoop(needStart, needEnd, sheet, expenseType, typeOrSpec);
-      else if (typeOrSpec == "spec") addCol = needWantLoop(needStartSpec, needEndSpec, sheet, expenseType, typeOrSpec);
+  switch (checkOrRes) {
+    case "CHECK":
+      switch (colCases) {
+        case "NEED":
+          if (typeOrSpec == "type") addCol = needWantLoop(needStart, needEnd, sheet, expenseType, typeOrSpec);
+          else if (typeOrSpec == "spec") addCol = needWantLoop(needStartSpec, needEndSpec, sheet, expenseType, typeOrSpec);
+          break;
+        case "WANT":
+          if (typeOrSpec == "type") addCol = needWantLoop(wantStart, wantEnd, sheet, expenseType, typeOrSpec);
+          else if (typeOrSpec == "spec") addCol = needWantLoop(wantStartSpec, wantEndSpec, sheet, expenseType, typeOrSpec);
+          break;
+        case "REIMB IN":
+          if (typeOrSpec == "type") addCol = checkReimbInCol;
+          else if (typeOrSpec == "spec") addCol = checkReimbInColSpec;
+          break;
+        case "REIMB OUT":
+          if (typeOrSpec == "type") addCol = checkReimbOutCol;
+          else if (typeOrSpec == "spec") addCol = checkReimbOutColSpec;
+          break;
+        case "IN":
+          if (typeOrSpec == "type") addCol = checkInCol;
+          else if (typeOrSpec == "spec") addCol = checkInColSpec;
+          break;
+        default:
+          addCol = -1;
+      }
       break;
-    case "WANT":
-      if (typeOrSpec == "type") addCol = needWantLoop(wantStart, wantEnd, sheet, expenseType, typeOrSpec);
-      else if (typeOrSpec == "spec") addCol = needWantLoop(wantStartSpec, wantEndSpec, sheet, expenseType, typeOrSpec);
-      break;
-    case "REIMB":
-      if (typeOrSpec == "type") addCol = checkReimbOutCol;
-      else if (typeOrSpec == "spec") addCol = checkReimbOutColSpec;
-      break;
-    case "FIXED":
-      if (typeOrSpec == "type") addCol = resFixedCol;
-      else if (typeOrSpec == "spec") addCol = resFixedColSpec;
-      break;
-    case "NON-FIXED":
-      if (typeOrSpec == "type") addCol = resNonFixedCol;
-      else if (typeOrSpec == "spec") addCol = resNonFixedColSpec;
+    case "RES":
+      switch (colCases) {
+        case "FIXED":
+          if (typeOrSpec == "type") addCol = resFixedCol;
+          else if (typeOrSpec == "spec") addCol = resFixedColSpec;
+          break;
+        case "NON-FIXED":
+          if (typeOrSpec == "type") addCol = resNonFixedCol;
+          else if (typeOrSpec == "spec") addCol = resNonFixedColSpec;
+          break;
+        case "REIMB IN":
+          if (typeOrSpec == "type") addCol = resReimbInCol;
+          else if (typeOrSpec == "spec") addCol = resReimbInColSpec;
+          break;
+        case "REIMB OUT":
+          if (typeOrSpec == "type") addCol = resReimbOutCol;
+          else if (typeOrSpec == "spec") addCol = resReimbOutColSpec;
+          break;
+        case "OUT":
+          if (typeOrSpec == "type") addCol = resOutCol;
+          else if (typeOrSpec == "spec") addCol = resOutColSpec;
+          break;
+        default:
+          addCol = -1;
+      }
       break;
     default:
       addCol = -1;
-  }
+    }
   return addCol;
 }
 
@@ -834,7 +871,7 @@ function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
 //hides certain rows or col entries based on pressed buttons
 function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonColToStartChecking, rowOrCol){
     var buttonRow = activeCell.getRow();
-    
+
     var lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue();
     var prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1;
 
