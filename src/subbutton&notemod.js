@@ -346,7 +346,7 @@ function onEdit(e) {
         }
 
         if (typeSheetIn.getValue() == "US") {
-          addButtonAct(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, usSheet)
+          addButtonAct(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, usSheet, usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetIn.getValue() == "TW") {
           addButtonAct(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, twSheet)
         }
@@ -512,7 +512,7 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
 }
 
 //adds in val to chosen cell given parameters
-function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet){
+function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet, specSheet, hideSheet){
 
   var today = new Date();
   var addRow = findAddRow(typeSheet, today);
