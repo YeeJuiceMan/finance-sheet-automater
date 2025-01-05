@@ -534,7 +534,7 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
-  addMoney(addRow, addCol, amount, typeSheet); // adds amount to curr eqn
+  addMoney(addRow, addCol, amount.getValue(), typeSheet); // adds amount to curr eqn
 
   //vars for dropdown
   var rangeArr = findSpecMonthRange(hideSheet, today, 5);
