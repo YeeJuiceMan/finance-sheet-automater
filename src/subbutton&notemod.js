@@ -221,6 +221,17 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
 }
 
 function onEdit(e) {
+  if (!e) {
+    throw new Error(
+      'Please do not run the onEdit(e) function in the script editor window. '
+      + 'It runs automatically when you hand edit the spreadsheet. '
+      + 'See https://stackoverflow.com/a/63851123/13045193.'
+    );
+  }
+  onTrigger(e);
+}
+
+function onTrigger(e) {
   //basic sheets var
     const ss = SpreadsheetApp.getActiveSpreadsheet(),
     s = SpreadsheetApp.getActiveSheet(),
