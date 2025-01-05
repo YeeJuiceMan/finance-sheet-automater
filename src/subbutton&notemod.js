@@ -299,6 +299,7 @@ function onEdit(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
+          Logger.log("iteration test");
           subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { //will be changed later
           subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twDayVal, twSheet);
