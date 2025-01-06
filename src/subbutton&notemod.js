@@ -247,15 +247,16 @@ function onTrigger(e) {
 
   //out var
     typeSheetOut = consoleSheet.getRange("B2:C3"),
-    errorMsgOut = consoleSheet.getRange("B24"),
+    errorMsgOut = consoleSheet.getRange("B26"),
     checkOrResOut = consoleSheet.getRange("C5:C6"),
     needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
     expenseType = consoleSheet.getRange("C9:C10"),
     amountOut = consoleSheet.getRange("C11:C12"),
     expenseNoteType = consoleSheet.getRange("C13:C14"),
     newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-    usDayVal = consoleSheet.getRange("C20"),
-    twDayVal = consoleSheet.getRange("C22"),
+    creditType = consoleSheet.getRange("C17:C18"),
+    usDayVal = consoleSheet.getRange("C22"),
+    twDayVal = consoleSheet.getRange("C24"),
 
   //in var
     typeSheetIn = consoleSheet.getRange("E2:F3"),
@@ -285,8 +286,8 @@ function onTrigger(e) {
   }
 
   /*
-  B18 = BUTTON RED (OUT)
-  C18 = BUTTON GREEN (OUT)
+  B20 = BUTTON RED (OUT)
+  C20 = BUTTON GREEN (OUT)
 
   E16 = BUTTON RED (IN)
   F16 = BUTTON GREEN (IN)
@@ -297,7 +298,7 @@ function onTrigger(e) {
   //console buttons
   if (activeVal == true && s.getSheetName() == "Console") {
     switch (reference){
-      case "B18": //red out
+      case "B20": //red out
         activeCell.setValue(false);
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
@@ -320,7 +321,7 @@ function onTrigger(e) {
         errorMsgOut.setBackground("#f6b26b");
         return;
 
-      case "C18": //green out
+      case "C20": //green out
         activeCell.setValue(false);
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
