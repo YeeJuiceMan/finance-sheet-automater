@@ -432,6 +432,7 @@ function onTrigger(e) {
         errorMsgReimb.setBackground("#93c47d");
         activeCell.setValue(false);
         return;
+
       default: //extra button conditions
         activeCell.setValue(false);
         return;
