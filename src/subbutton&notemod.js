@@ -299,7 +299,6 @@ function onTrigger(e) {
   if (activeVal == true && s.getSheetName() == "Console") {
     switch (reference){
       case "B20": //red out
-        activeCell.setValue(false);
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
@@ -307,6 +306,7 @@ function onTrigger(e) {
         if (amountOut.getValue().length <= 0 || amountOut.getValue() == 0) {
           errorMsgOut.setValue("There are missing cost inputs!");
           errorMsgOut.setBackground("#e06666");
+          activeCell.setValue(false);
           return;
         }
 
@@ -319,10 +319,10 @@ function onTrigger(e) {
 
         errorMsgOut.setValue("Successfully added " + typeSheetOut.getValue() + " $" + amountOut.getValue() + ". Please input notes & press Green to continue.");
         errorMsgOut.setBackground("#f6b26b");
+        activeCell.setValue(false);
         return;
 
       case "C20": //green out
-        activeCell.setValue(false);
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
@@ -330,6 +330,7 @@ function onTrigger(e) {
         if (expenseNoteType.getValue() == "N/A" && newExpenseNoteType.getValue().length == 0) {
           errorMsgOut.setValue("There are missing note inputs!");
           errorMsgOut.setBackground("#e06666");
+          activeCell.setValue(false);
           return;
         }
 
@@ -344,10 +345,10 @@ function onTrigger(e) {
 
         errorMsgOut.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
         errorMsgOut.setBackground("#93c47d");
+        activeCell.setValue(false);
         return;
 
       case "E16": //red in
-        activeCell.setValue(false);
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
 
@@ -355,6 +356,7 @@ function onTrigger(e) {
         if (amountIn.getValue().length <= 0 || amountIn.getValue() == 0) {
           errorMsgIn.setValue("There are missing income inputs!");
           errorMsgIn.setBackground("#e06666");
+          activeCell.setValue(false);
           return;
         }
 
@@ -366,6 +368,7 @@ function onTrigger(e) {
 
         errorMsgIn.setValue("Successfully added " + typeSheetIn.getValue() + " $" + amountIn.getValue() + ". Please input notes & press Green to continue.");
         errorMsgIn.setBackground("#f6b26b");
+        activeCell.setValue(false);
         return;
 
       case "F16": //green in
@@ -377,6 +380,7 @@ function onTrigger(e) {
         if (incomeNoteType.getValue() == "N/A" && newIncomeNoteType.getValue().length == 0) {
           errorMsgIn.setValue("There are missing note inputs!");
           errorMsgIn.setBackground("#e06666");
+          activeCell.setValue(false);
           return;
         }
 
@@ -388,11 +392,11 @@ function onTrigger(e) {
 
         errorMsgIn.setValue("Notes added to " + typeSheetOut.getValue() + ".");
         errorMsgIn.setBackground("#93c47d");
+        activeCell.setValue(false);
         return;
 
       case "H14": //red reimb
         console.log("pressed reimb red");
-        activeCell.setValue(false);
         errorMsgReimb.setValue("...");
         errorMsgReimb.setBackground("#fbbc04");
         var needReimb;
@@ -410,11 +414,11 @@ function onTrigger(e) {
           errorMsgReimb.setValue("There are no items to reimb.");
           errorMsgReimb.setBackground("#93c47d");
         }
+        activeCell.setValue(false);
         return;
 
       case "I14": //green reimb
         console.log("pressed reimb green");
-        activeCell.setValue(false);
         errorMsgReimb.setValue("...");
         errorMsgReimb.setBackground("#fbbc04");
 
@@ -426,8 +430,10 @@ function onTrigger(e) {
 
         errorMsgReimb.setValue("Item reimbed.");
         errorMsgReimb.setBackground("#93c47d");
+        activeCell.setValue(false);
         return;
       default: //extra button conditions
+        activeCell.setValue(false);
         return;
     }
   }
