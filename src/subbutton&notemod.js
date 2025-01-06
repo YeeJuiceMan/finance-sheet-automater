@@ -244,6 +244,8 @@ function onTrigger(e) {
     twSheet = ss.getSheetByName("College Savings 3.0 (TW)"),
     usSpecSheet = ss.getSheetByName("College Savings 3.0 Specifics"),
     usSpecSheetHideMenu = ss.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
+    twSpecSheet = ss.getSheetByName("College Savings 3.0 (TW) Specifics"),
+    twSpecSheetHideMenu = ss.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"),
 
   //out var
     typeSheetOut = consoleSheet.getRange("B2:C3"),
@@ -273,7 +275,6 @@ function onTrigger(e) {
     year = consoleSheet.getRange("I5:I6"),
     month = consoleSheet.getRange("I7:I8"),
     nonReimbCell = consoleSheet.getRange("I11:I12"),
-    specRow = consoleSheet.getRange("H4");
 
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
@@ -314,7 +315,7 @@ function onTrigger(e) {
           Logger.log("iteration test");
           subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { //will be changed later
-          subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twDayVal, twSheet);
+          subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twDayVal, twSheet, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgOut.setValue("Successfully added " + typeSheetOut.getValue() + " $" + amountOut.getValue() + ". Please input notes & press Green to continue.");
@@ -402,9 +403,9 @@ function onTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(year, month, nonReimbCell, specRow, usSheet)
+          needReimb = checkReimb(year, month, nonReimbCell, usSheet, usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(year, month, nonReimbCell, specRow, twSheet)
+          needReimb = checkReimb(year, month, nonReimbCell, twSheet, twSpecSheet, twSpecSheetHideMenu)
         }
 
         if (needReimb == true) {
@@ -474,7 +475,7 @@ function onTrigger(e) {
 
 //----------button action----------//
 
-//adds out val to chosen cell given parameters 
+//adds out val to chosen cell given parameters
 function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expenseNoteType, newExpenseNoteType, dayVal, typeSheet, specSheet, hideSheet) {
 
   const today = new Date();
@@ -577,11 +578,11 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
 
 
 //checks reimb of specified year & date to see what isn't reimbed yet
-function checkReimb(year, month, nonReimbCell, specRow, typeSheet) {
+function checkReimb(year, month, nonReimbCell, typeSheet, specSheet, hideSheet) {
 
-  var monthRow = findAddRow(typeSheet, new Date(year.getValue(), month.getValue() - 1));
+  //var monthRow = findAddRow(typeSheet, new Date(year.getValue(), month.getValue() - 1));
 
-  noteToSheets(typeSheet, monthRow, checkReimbOutCol, specRow);
+  //noteToSheets(typeSheet, monthRow, checkReimbOutCol, specRow);
 
   var nonReimbArray = ["N/A"];
   var sheetInd = rowThatDropdownSheetStarts + 1;
@@ -684,7 +685,7 @@ function subModSpecSheet(date, specSheet, hideSheet, reimbOrNot, monthEndRowsLis
 //----------miscellaneous----------//
 
 
-//Add amount to appropiate cell
+//Add amount to appropriate cell
 function addMoney(addRow, addCol, amount, typeSheet){
   var curEq = typeSheet.getRange(addRow, addCol).getFormula();
   if (curEq == "=0") {
@@ -759,6 +760,29 @@ function findAddCol(sheet, expenseType, colCases, checkOrRes, typeOrSpec) {
 }
 
 
+//find appropiate row given current month and year
+function findAddRow(sheet, today) {
+  var addRow;
+  var currYear = today.getFullYear();
+  if (sheet.getName() == "College Savings 3.0") {
+    if (currYear == 2022) { //2022 is special case (only 4 months)
+      addRow = monthRowFinder(4, 7, today);
+    }
+    else { //finds normally
+      var baseYear = 2023;
+      var startRow = 8 + ((currYear - baseYear) * 12);
+      addRow = monthRowFinder(startRow, startRow + 11, today);
+    }
+  }
+  else if (sheet.getName() == "College Savings 3.0 (TW)") {
+    var baseYear = 2023;
+    var startRow = 4 + ((currYear - baseYear) * 12);
+    addRow = monthRowFinder(startRow, startRow + 11, today);
+  }
+  return addRow;
+}
+
+
 //loop to find col num of expense type spec or type
 function needWantLoop(start, end, sheet, expenseType, typeOrSpec) {
   if (typeOrSpec == "type") {
@@ -775,29 +799,6 @@ function needWantLoop(start, end, sheet, expenseType, typeOrSpec) {
     }
   }
   return -1;
-}
-
-
-//find appropiate row given current month and year
-function findAddRow(sheet, today) {
-  var addRow;
-  var currYear = today.getFullYear();
-  if (sheet.getName() == "College Savings 3.0") {
-    if (currYear == 2022) { //2022 is special case (only 4 months)
-      addRow = monthRowFinder(4, 7, today);
-    } 
-    else { //finds normally
-      var baseYear = 2023;
-      var startRow = 8 + ((currYear - baseYear) * 12); 
-      addRow = monthRowFinder(startRow, startRow + 11, today);
-    }
-  } 
-  else if (sheet.getName() == "College Savings 3.0 (TW)") {
-    var baseYear = 2023;
-    var startRow = 4 + ((currYear - baseYear) * 12);
-    addRow = monthRowFinder(startRow, startRow + 11, today);
-  }
-  return addRow;
 }
 
 
@@ -862,10 +863,10 @@ function findAddRowForSpecHide(sheet, today) {
   if (sheet.getName() == "College Savings 3.0 Specifics Hide Menu") {
     if (currYear == 2022) { //2022 is special case (only 4 months)
       addRow = monthRowFinder(6, 9, today);
-    } 
+    }
     else { //finds normally
       var baseYear = 2023;
-      var startRow = 10 + ((currYear - baseYear) * 12); 
+      var startRow = 10 + ((currYear - baseYear) * 12);
       addRow = monthRowFinder(startRow, startRow + 11, today);
     }
   }
@@ -1065,7 +1066,7 @@ function monthRowFinder(start, end, today) {
     var targetSheetInd;
     var foundReimbContent = false;
 
-    //finds cell to reimb 
+    //finds cell to reimb
     while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "" && foundReimbContent == false) {
       console.log(typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue()+" "+nonReimbEntry[1]);
       if (typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() == nonReimbEntry[1]) {
@@ -1089,7 +1090,7 @@ function monthRowFinder(start, end, today) {
       var reimbOrNot = typeSheet.getRange(sheetInd, colWithReimbMark);
 
       if (finEq.getValue() == finCost.getValue()) {
-        //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
+        //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")
         if (reimbOrNot.getValue() == false) {
           typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + "~ " + finEq.getValue() + ": " + expType.getValue() + "\n");
         } else {
