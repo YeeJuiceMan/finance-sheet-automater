@@ -274,7 +274,7 @@ function onTrigger(e) {
     errorMsgReimb = consoleSheet.getRange("H16"),
     year = consoleSheet.getRange("I5:I6"),
     month = consoleSheet.getRange("I7:I8"),
-    nonReimbCell = consoleSheet.getRange("I11:I12"),
+    nonReimbCell = consoleSheet.getRange("I11:I12");
 
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
