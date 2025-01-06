@@ -601,7 +601,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
 
   //adds into array where only non-reimbed items exist w/ their respective costs
   while (monthRowInd <= monthEndRow) {
-    if (specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() == false && specSheet.getRange(monthRowInd, totCostColSpec).getValue() != "") {
+    if (specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() == false) {
       Logger.log("month " + monthRowInd);
       nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
     }
