@@ -471,8 +471,8 @@ function onTrigger(e) {
   needStartSpec = 39,
   needEndSpec = 68,
   wantStartSpec = 69,
-  wantEndSpec = 124,
-  checkReimbOutColSpec = 125;
+  wantEndSpec = 98,
+  checkReimbOutColSpec = 99;
 
 //----------button action----------//
 
@@ -594,7 +594,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
   var totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes.getValue(), "spec") + 2; //expense type param ignored
   var expTypeColSpec = totCostColSpec + 1; //expense type param ignored
   var reimbMarkColSpec = totCostColSpec + 3;
-  Logger.log(monthRowInd + " " + totCostColSpec + " " + expTypeColSpec + " " + reimbMarkColSpec + " " + checkOrRes.getValue());
+  //Logger.log(monthRowInd + " " + totCostColSpec + " " + expTypeColSpec + " " + reimbMarkColSpec + " " + checkOrRes.getValue());
 
   //create array of non-reimbed items w/ N/A as default
   var nonReimbArray = ["N/A"];
@@ -602,7 +602,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
   //adds into array where only non-reimbed items exist w/ their respective costs
   while (monthRowInd <= monthEndRow) {
     if (specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() == false) {
-      Logger.log("month " + monthRowInd + " " + specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue());
+      //Logger.log("month " + monthRowInd + " " + specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue());
       nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
     }
     monthRowInd++;
