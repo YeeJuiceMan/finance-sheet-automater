@@ -274,6 +274,7 @@ function onTrigger(e) {
     errorMsgReimb = consoleSheet.getRange("H16"),
     year = consoleSheet.getRange("I5:I6"),
     month = consoleSheet.getRange("I7:I8"),
+    checkOrResReimb = consoleSheet.getRange("I9:I10"),
     nonReimbCell = consoleSheet.getRange("I11:I12");
 
   //for spec hide menu
@@ -403,9 +404,9 @@ function onTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(year, month, nonReimbCell, usSheet, usSpecSheet, usSpecSheetHideMenu)
+          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, usSheet, usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(year, month, nonReimbCell, twSheet, twSpecSheet, twSpecSheetHideMenu)
+          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, twSheet, twSpecSheet, twSpecSheetHideMenu)
         }
 
         if (needReimb == true) {
@@ -578,21 +579,31 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
 
 
 //checks reimb of specified year & date to see what isn't reimbed yet
-function checkReimb(year, month, nonReimbCell, typeSheet, specSheet, hideSheet) {
+function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet, hideSheet) {
 
   //var monthRow = findAddRow(typeSheet, new Date(year.getValue(), month.getValue() - 1));
 
   //noteToSheets(typeSheet, monthRow, checkReimbOutCol, specRow);
 
-  var nonReimbArray = ["N/A"];
-  var sheetInd = rowThatDropdownSheetStarts + 1;
+  //month range
+  var rangeArr = findSpecMonthRange(hideSheet, new Date(year.getValue(), month.getValue() - 1), 5);
+  var monthRowInd = rangeArr[0];
+  var monthEndRow = rangeArr[1];
 
-  //creates arrays where only non-reimbed items exist w/ their respective costs
-  while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "") {
-    if (typeSheet.getRange(sheetInd, colWithReimbMark).getValue() == false) {
-      nonReimbArray.push(typeSheet.getRange(sheetInd, colWithExpTotCost).getValue() + ": " + typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue());
+  //find cols with expense type names & reimb mark
+  var totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes, "spec") + 2; //expense type param ignored
+  var expTypeColSpec = totCostColSpec + 1; //expense type param ignored
+  var reimbMarkColSpec = totCostColSpec + 3;
+
+  //create array of non-reimbed items w/ N/A as default
+  var nonReimbArray = ["N/A"];
+
+  //adds into array where only non-reimbed items exist w/ their respective costs
+  while (monthRowInd <= monthEndRow) {
+    if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue()) {
+      nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + typeSheet.getRange(monthRowInd, expTypeColSpec).getValue());
     }
-    sheetInd++;
+    monthRowInd++;
   }
 
   //revalidate nonReimbCell & nonReimbCostCell dropdown list
@@ -697,7 +708,7 @@ function addMoney(addRow, addCol, amount, typeSheet){
 }
 
 
-//find appropiate col given need/want and expense type & sheet type (specific or normal)
+//find appropriate col given need/want and expense type & sheet type (specific or normal)
 function findAddCol(sheet, expenseType, colCases, checkOrRes, typeOrSpec) {
   var addCol;
   switch (checkOrRes) {
@@ -760,7 +771,7 @@ function findAddCol(sheet, expenseType, colCases, checkOrRes, typeOrSpec) {
 }
 
 
-//find appropiate row given current month and year
+//find appropriate row given current month and year
 function findAddRow(sheet, today) {
   var addRow;
   var currYear = today.getFullYear();
@@ -856,7 +867,7 @@ function addEntryRow(today, monthEndRowsListCol, lastColWithData, sheet, hideShe
 }
 
 
-//find appropiate row given current month and year
+//find appropriate row given current month and year
 function findAddRowForSpecHide(sheet, today) {
   var addRow;
   var currYear = today.getFullYear();
@@ -898,7 +909,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonCo
       if (rowOrCol == "row") {
         targetSpecSheet.hideRows(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
       }
-      else if (rowOrCol == "col") 
+      else if (rowOrCol == "col")
         targetSpecSheet.hideColumns(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
     }
     else if (activeVal == false) {
@@ -918,7 +929,7 @@ function monthRowFinder(start, end, today) {
 }
 
 
-//----------note modding----------//
+//----------note modding; will be left here for the benefit of the reader----------//
 
 
   //modifies specified out note w/ updated info
