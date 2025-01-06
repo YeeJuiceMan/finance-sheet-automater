@@ -594,6 +594,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
   var totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes, "spec") + 2; //expense type param ignored
   var expTypeColSpec = totCostColSpec + 1; //expense type param ignored
   var reimbMarkColSpec = totCostColSpec + 3;
+  Logger.log(totCostColSpec + " " + expTypeColSpec + " " + reimbMarkColSpec);
 
   //create array of non-reimbed items w/ N/A as default
   var nonReimbArray = ["N/A"];
@@ -601,7 +602,8 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
   //adds into array where only non-reimbed items exist w/ their respective costs
   while (monthRowInd <= monthEndRow) {
     if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue()) {
-      nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + typeSheet.getRange(monthRowInd, expTypeColSpec).getValue());
+      Logger.log("month" + monthRowInd);
+      nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
     }
     monthRowInd++;
   }
