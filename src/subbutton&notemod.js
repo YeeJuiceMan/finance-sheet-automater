@@ -594,7 +594,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, typeSheet, specSheet,
   var totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes.getValue(), "spec") + 2; //expense type param ignored
   var expTypeColSpec = totCostColSpec + 1; //expense type param ignored
   var reimbMarkColSpec = totCostColSpec + 3;
-  Logger.log(totCostColSpec + " " + expTypeColSpec + " " + reimbMarkColSpec + " " + checkOrRes.getValue());
+  Logger.log(monthRowInd + " " + totCostColSpec + " " + expTypeColSpec + " " + reimbMarkColSpec + " " + checkOrRes.getValue());
 
   //create array of non-reimbed items w/ N/A as default
   var nonReimbArray = ["N/A"];
