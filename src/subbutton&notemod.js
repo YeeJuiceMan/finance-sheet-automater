@@ -259,7 +259,7 @@ checkReimbOutColSpec = 99;
 const spreadSheetConfig = {
   get spreadsheet() {
     delete this.spreadsheet;
-    return (this.spreadsheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"));
+    return (this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet());
   },
 };
 const mainSpreadSheet = spreadSheetConfig.spreadsheet;
