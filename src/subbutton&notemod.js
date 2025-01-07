@@ -881,9 +881,7 @@ function addEntryRow(today, monthEndRowsListCol, lastColWithData, sheet, hideShe
 function findAddRowForSpecHide(sheet, today) {
   let addRow,
   currYear = today.getFullYear();
-  Logger.log(sheet.getName());
   if (sheet.getName() == "College Savings 3.0 Specifics Hide Menu") {
-    Logger.log("found hide menu");
     if (currYear == 2022) { //2022 is special case (only 4 months)
       addRow = monthRowFinder(6, 9, today);
     }
@@ -891,7 +889,6 @@ function findAddRowForSpecHide(sheet, today) {
       let baseYear = 2023;
       let startRow = 10 + ((currYear - baseYear) * 12);
       addRow = monthRowFinder(startRow, startRow + 11, today);
-      Logger.log(addRow + " found");
     }
   }
   return addRow;
@@ -901,8 +898,7 @@ function findAddRowForSpecHide(sheet, today) {
 //finds range of values and the length of the range; returns array with start, end, length, and row of month given date
 function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
   //find row of month in hide menu
-  var monthRow = findAddRowForSpecHide(hideSheet, date);
-  Logger.log(monthRow);
+  let monthRow = findAddRowForSpecHide(hideSheet, date);
   //find range of rows a month holds
   let lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
   let startRow = hideSheet.getRange(monthRow - 1, monthEndRowsListCol).getValue() + 1;
