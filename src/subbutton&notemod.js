@@ -889,6 +889,7 @@ function findAddRowForSpecHide(sheet, today) {
       let baseYear = 2023;
       let startRow = 10 + ((currYear - baseYear) * 12);
       addRow = monthRowFinder(startRow, startRow + 11, today);
+      Logger.log(addRow + " found");
     }
   }
   return addRow;
