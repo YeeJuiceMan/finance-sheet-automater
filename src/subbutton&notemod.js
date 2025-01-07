@@ -316,7 +316,7 @@ function onTrigger(e) {
     year = consoleSheet.getRange("I5:I6"),
     month = consoleSheet.getRange("I7:I8"),
     checkOrResReimb = consoleSheet.getRange("I9:I10"),
-nonReimbCell = consoleSheet.getRange("I11:I12"),
+    nonReimbCell = consoleSheet.getRange("I11:I12");
 
 
   //for spec hide menu
