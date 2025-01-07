@@ -1,3 +1,4 @@
+//@NotOnlyCurrentDoc
 function test(){
   //basic sheets var
     const ss = SpreadsheetApp.getActiveSpreadsheet(),
