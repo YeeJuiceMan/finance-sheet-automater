@@ -323,14 +323,15 @@ function onTrigger(e) {
     reference = activeCell.getA1Notation(),
     activeVal = activeCell.getValue(),
     refArr = reference.split('');
-  Logger.log(e.source.getActiveSheet().getName());
+    activeSheetName = e.source.getActiveSheet().getName();
+
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
-    if (e.source.getActiveSheet() == usSpecSheetHideMenu)
+    if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 5, "row");
   }
   else if (refArr[0] == "I"){ //hide category buttons
-    if (e.source.getActiveSheet() == usSpecSheetHideMenu)
+    if (e.source.getActiveSheet() == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 10, "col");
   }
 
@@ -345,7 +346,7 @@ function onTrigger(e) {
   I14 = BUTTON GREEN (REIMB)
   */
   //console buttons
-  if (activeVal == true && e.source.getActiveSheet() == consoleSheet) {
+  if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     switch (reference){
       case "B20": //red out
         errorMsgOut.setValue("...");
