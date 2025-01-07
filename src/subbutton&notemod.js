@@ -263,7 +263,8 @@ const spreadSheetConfig = {
   },
 };
 const mainSpreadSheet = spreadSheetConfig.spreadsheet;
-const usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
+const consoleSheet = mainSpreadSheet.getSheetByName("Console"),
+usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
 twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
 usSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics"),
 usSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
