@@ -572,7 +572,8 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
 function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet) {
 
   //month range
-  let rangeArr = findSpecMonthRange(hideSheet, new Date(year.getValue(), month.getValue() - 1), 5);
+  let chosenDate = new Date(year.getValue(), month.getValue() - 1);
+  let rangeArr = findSpecMonthRange(hideSheet, chosenDate, 5);
   let monthRowInd = rangeArr[0],
   monthEndRow = rangeArr[1];
 
