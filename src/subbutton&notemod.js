@@ -882,6 +882,7 @@ function findAddRowForSpecHide(sheet, today) {
   let addRow,
   currYear = today.getFullYear();
   if (sheet.getName() == "College Savings 3.0 Specifics Hide Menu") {
+    Logger.log("found hide menu");
     if (currYear == 2022) { //2022 is special case (only 4 months)
       addRow = monthRowFinder(6, 9, today);
     }
