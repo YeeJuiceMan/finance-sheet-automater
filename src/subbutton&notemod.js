@@ -323,7 +323,7 @@ function onTrigger(e) {
     reference = activeCell.getA1Notation(),
     activeVal = activeCell.getValue(),
     refArr = reference.split('');
-
+  Logger.log(e.source.getActiveSheet());
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
     if (e.source.getActiveSheet() == usSpecSheetHideMenu)
