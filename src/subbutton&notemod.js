@@ -21,8 +21,8 @@ function test(){
     amountOut = consoleSheet.getRange("C11:C12"),
     expenseNoteType = consoleSheet.getRange("C13:C14"),
     newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-    usDayVal = consoleSheet.getRange("C20"),
-    twDayVal = consoleSheet.getRange("C22"),
+    usDayVal = consoleSheet.getRange("C22"),
+    twDayVal = consoleSheet.getRange("C24"),
 
   //in var
     typeSheetIn = consoleSheet.getRange("E2:F3"),
@@ -326,11 +326,11 @@ function onTrigger(e) {
 
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
-    if (s.getName() == "College Savings 3.0 Specifics Hide Menu")
+    if (e.source.getActiveSheet() == usSpecSheetHideMenu)
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 5, "row");
   }
   else if (refArr[0] == "I"){ //hide category buttons
-    if (s.getName() == "College Savings 3.0 Specifics Hide Menu")
+    if (e.source.getActiveSheet() == usSpecSheetHideMenu)
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 10, "col");
   }
 
@@ -345,7 +345,7 @@ function onTrigger(e) {
   I14 = BUTTON GREEN (REIMB)
   */
   //console buttons
-  if (activeVal == true && s.getSheetName() == "Console") {
+  if (activeVal == true && e.source.getActiveSheet() == consoleSheet) {
     switch (reference){
       case "B20": //red out
         errorMsgOut.setValue("...");
