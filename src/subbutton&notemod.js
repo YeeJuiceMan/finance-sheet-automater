@@ -398,9 +398,9 @@ function onTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, usSheet, usSpecSheet, usSpecSheetHideMenu)
+          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, twSheet, twSpecSheet, twSpecSheetHideMenu)
+          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, twSpecSheet, twSpecSheetHideMenu)
         }
 
         if (needReimb == true) {
