@@ -1,5 +1,5 @@
 function resetDailyBudget() {
-  var conSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177").getSheetByName("Console");
+  var conSheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA").getSheetByName("Console");
 
   if (conSheet.getRange("C20").getValue() > conSheet.getRange("C21").getValue()){
     conSheet.getRange("C21").setValue(conSheet.getRange("C20").getValue());

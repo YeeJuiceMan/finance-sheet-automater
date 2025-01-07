@@ -101,6 +101,7 @@ function test(){
   // subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
 }
 
+
 //Print all notes cost and exp type (given it isn't empty) to spec sheet
 function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCol, reimbOrNot, monthEndRowsListCol, ccolWithBrokeDownCost, ccolWithReimbMark) {
 
@@ -218,6 +219,86 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
   return;
 }
 
+
+//note cols
+const rowThatDropdownSheetStarts = 4, // for notes
+colWithBrokeDownCost = 36, //for notes
+colWithExpTotCost = 37, //for notes
+colWithExpTypeNames = 38, //for notes
+colWithReimbMark = 39, //for notes
+
+//normal sheet cols
+resFixedCol = 4,
+resNonFixedCol = 5,
+resReimbInCol = 6,
+checkInCol = 7,
+checkReimbInCol = 8,
+resOutCol = 9,
+resReimbOutCol = 10,
+needStart = 11,
+needEnd = 16,
+wantStart = 17,
+wantEnd = 22,
+checkReimbOutCol = 23,
+
+//spec sheet cols
+resFixedColSpec = 3,
+resNonFixedColSpec = 8,
+resReimbInColSpec = 13,
+checkInColSpec = 18,
+checkReimbInColSpec = 23,
+resOutColSpec = 28,
+resReimbOutColSpec = 33,
+needStartSpec = 39,
+needEndSpec = 68,
+wantStartSpec = 69,
+wantEndSpec = 98,
+checkReimbOutColSpec = 99;
+
+//sheet vars
+mainSpreadSheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"),
+consoleSheet = mainSpreadSheet.getSheetByName("Console"),
+usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
+twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
+usSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics"),
+usSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
+twSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics"),
+twSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"),
+
+//out var
+typeSheetOut = consoleSheet.getRange("B2:C3"),
+errorMsgOut = consoleSheet.getRange("B26"),
+checkOrResOut = consoleSheet.getRange("C5:C6"),
+needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
+expenseType = consoleSheet.getRange("C9:C10"),
+amountOut = consoleSheet.getRange("C11:C12"),
+expenseNoteType = consoleSheet.getRange("C13:C14"),
+newExpenseNoteType = consoleSheet.getRange("C15:C16"),
+creditType = consoleSheet.getRange("C17:C18"),
+usDayVal = consoleSheet.getRange("C22"),
+twDayVal = consoleSheet.getRange("C24"),
+
+//in var
+typeSheetIn = consoleSheet.getRange("E2:F3"),
+errorMsgIn = consoleSheet.getRange("E18"),
+checkOrResIn = consoleSheet.getRange("F5:F6"),
+fixedOrNot = consoleSheet.getRange("F7:F8"),
+amountIn = consoleSheet.getRange("F9:F10"),
+incomeNoteType = consoleSheet.getRange("F11:F12"),
+newIncomeNoteType = consoleSheet.getRange("F13:F14"),
+
+//reimb var
+typeSheetReimb = consoleSheet.getRange("H2:I3"),
+errorMsgReimb = consoleSheet.getRange("H16"),
+year = consoleSheet.getRange("I5:I6"),
+month = consoleSheet.getRange("I7:I8"),
+checkOrResReimb = consoleSheet.getRange("I9:I10"),
+nonReimbCell = consoleSheet.getRange("I11:I12"),
+
+//extras
+usMonthEndRowListCol = 5;
+
+
 function onEdit(e) {
   if (!e) {
     throw new Error(
@@ -229,51 +310,13 @@ function onEdit(e) {
   onTrigger(e);
 }
 
+
 function onTrigger(e) {
-  //basic sheets var
-    const ss = SpreadsheetApp.getActiveSpreadsheet(),
-    s = SpreadsheetApp.getActiveSheet(),
-    activeCell = ss.getActiveCell(),
+  //basic event sheets var
+    const activeCell = e.range,
     reference = activeCell.getA1Notation(),
     activeVal = activeCell.getValue(),
-    refArr = reference.split(''),
-    consoleSheet = ss.getSheetByName("Console"),
-    usSheet = ss.getSheetByName("College Savings 3.0"),
-    twSheet = ss.getSheetByName("College Savings 3.0 (TW)"),
-    usSpecSheet = ss.getSheetByName("College Savings 3.0 Specifics"),
-    usSpecSheetHideMenu = ss.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
-    twSpecSheet = ss.getSheetByName("College Savings 3.0 (TW) Specifics"),
-    twSpecSheetHideMenu = ss.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"),
-
-  //out var
-    typeSheetOut = consoleSheet.getRange("B2:C3"),
-    errorMsgOut = consoleSheet.getRange("B26"),
-    checkOrResOut = consoleSheet.getRange("C5:C6"),
-    needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
-    expenseType = consoleSheet.getRange("C9:C10"),
-    amountOut = consoleSheet.getRange("C11:C12"),
-    expenseNoteType = consoleSheet.getRange("C13:C14"),
-    newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-    creditType = consoleSheet.getRange("C17:C18"),
-    usDayVal = consoleSheet.getRange("C22"),
-    twDayVal = consoleSheet.getRange("C24"),
-
-  //in var
-    typeSheetIn = consoleSheet.getRange("E2:F3"),
-    errorMsgIn = consoleSheet.getRange("E18"),
-    checkOrResIn = consoleSheet.getRange("F5:F6"),
-    fixedOrNot = consoleSheet.getRange("F7:F8"),
-    amountIn = consoleSheet.getRange("F9:F10"),
-    incomeNoteType = consoleSheet.getRange("F11:F12"),
-    newIncomeNoteType = consoleSheet.getRange("F13:F14"),
-
-  //reimb var
-    typeSheetReimb = consoleSheet.getRange("H2:I3"),
-    errorMsgReimb = consoleSheet.getRange("H16"),
-    year = consoleSheet.getRange("I5:I6"),
-    month = consoleSheet.getRange("I7:I8"),
-    checkOrResReimb = consoleSheet.getRange("I9:I10"),
-    nonReimbCell = consoleSheet.getRange("I11:I12");
+    refArr = reference.split('');
 
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
@@ -335,7 +378,7 @@ function onTrigger(e) {
 
         if (typeSheetOut.getValue() == "US") {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
-          subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu, reimbOrNot, 5, expenseType, needOrWantOrReimb)
+          subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu, reimbOrNot, usMonthEndRowListCol, expenseType, needOrWantOrReimb)
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
           outNoteMod(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twSheet);
         }
@@ -435,37 +478,6 @@ function onTrigger(e) {
   }
   return;
 }
-
-//vars multiple functions use and can change
-  const rowThatDropdownSheetStarts = 4, // for notes
-  colWithBrokeDownCost = 36, //for notes
-  colWithExpTotCost = 37, //for notes
-  colWithExpTypeNames = 38, //for notes
-  colWithReimbMark = 39, //for notes
-  resFixedCol = 4,
-  resNonFixedCol = 5,
-  resReimbInCol = 6,
-  checkInCol = 7,
-  checkReimbInCol = 8,
-  resOutCol = 9,
-  resReimbOutCol = 10,
-  needStart = 11,
-  needEnd = 16,
-  wantStart = 17,
-  wantEnd = 22,
-  checkReimbOutCol = 23,
-  resFixedColSpec = 3,
-  resNonFixedColSpec = 8,
-  resReimbInColSpec = 13,
-  checkInColSpec = 18,
-  checkReimbInColSpec = 23,
-  resOutColSpec = 28,
-  resReimbOutColSpec = 33,
-  needStartSpec = 39,
-  needEndSpec = 68,
-  wantStartSpec = 69,
-  wantEndSpec = 98,
-  checkReimbOutColSpec = 99;
 
 //----------button action----------//
 
@@ -606,61 +618,79 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet)
 //----------spec sheet mods----------//
 
 
-function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, monthEndRowsListCol, expenseType, specSheet, hideSheet) {
+function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardType, expenseNoteType, newExpenseNoteType, expenseType, monthEndRowsListCol, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
   expenseTypeVal = expenseType.getValue(),
-  needOrWantOrReimbVal = needOrWantOrReimb.getValue();
+  needOrWantOrReimbVal = needOrWantOrReimb.getValue(),
+  expenseNoteTypeVal = expenseNoteType.getValue();
 
   //for readability
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
-  //RES
+  //RES col finding
   if (checkOrRes.getValue() == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
-      ccolWithDate = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec"); //by default settles on date col
+      ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
     }
     else { //not reimb out
       ccolWithDate = findAddCol(specSheet, expenseTypeVal, "OUT", "RES", "spec"); //by default settles on date col
     }
   }
 
-  //CHECK
+  //CHECK col finding
   else {
     //find col of targeted cell given N/W/R & exp type
     ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec") + 3; //by default settles on date col
   }
 
-  //other cols relative to first one (reimb is exception)
+  //other cols relative to found one (reimb is exception)
   let ccolWithBrokeDownCost = ccolWithDate + 1,
   ccolWithExpTotCost = ccolWithDate + 2,
   ccolWithExpTypeNames = ccolWithDate + 3,
   ccolWithCardType = ccolWithDate + 4,
   ccolWithReimbMark = ccolWithDate + 5; //may or may not be used
 
-  //finding range of month in spec sheet
+  //finding range of month in spec sheet to find target row
   let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
   totalMonthLen = rangeArr[2],
   targetRow; //the row to add entry
 
-  //checks if there is space in specific category to add entry; if not extend
+  //checks if there is space in specific category to add entry; if not extend & set target row to last row
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, 5, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
     totalMonthLen++;
     targetRow = lastRow;
   }
-  else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //finds first blank row
+  else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
 
+  let reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark); //reimb cell as it is used in multiple conditions
 
-  //if in reimb set default reimb to false (will set true by reimb button)
-  if (needOrWantOrReimbVal == "REIMB OUT") specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(false);
+  //note entry dne or the entry exists but is already reimbed
+  if (expenseNoteTypeVal == "N/A" || (expenseNoteTypeVal != "N/A"
+                                      && needOrWantOrReimbVal == "REIMB OUT"
+                                      && reimbCell.getValue())) {
+    specSheet.getRange(targetRow, ccolWithBrokeDownCost).setValue(amountOut.getValue()); //set cost
+    specSheet.getRange(targetRow, ccolWithExpTotCost).setValue(amountOut.getValue()); //set total cost the same as cost
+    specSheet.getRange(targetRow, ccolWithExpTypeNames).setValue(expenseType.getValue()); //set exp type
+    if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
+  }
+  else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
+    targetRow = startRow;
+    while (expenseNoteTypeVal != specSheet.getRange(targetRow, ccolWithExpTypeNames).getValue() && targetRow <= lastRow) targetRow++; //iterate to find the right row with the same exp type
 
-  //put values in respective columns
-  specSheet.getRange(sheetInd, ccolWithBrokeDownCost).setValue(tempFormulaEntry);
+    let brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
+    totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost);
+
+    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOut.getValue()); //add onto existing formula
+    totCostCell.setValue(totCostCell.getValue() + "+" + amountOut.getValue()); //add onto existing total cost
+  }
+
+  specSheet.getRange(targetRow, ccolWithDate).setValue(date); //set date (force updates existing entry to recently modified date)
 
   //no formula exists (1 cost)
   if (tempCostEntry[1] == null) {
@@ -958,255 +988,255 @@ function findFirstBlankRow(sheet, startRow, endRow, col) {
 //----------note modding; will be left here for the benefit of the reader----------//
 
 
-  //modifies specified out note w/ updated info
-  function outNoteMod(checkOrRes, needOrWantOrReimb, expenseType, amount, expenseNoteType, newExpenseNoteType, typeSheet) {
+//modifies specified out note w/ updated info
+function outNoteMod(checkOrRes, needOrWantOrReimb, expenseType, amount, expenseNoteType, newExpenseNoteType, typeSheet) {
 
-    var today = new Date();
-    var sheetInd = rowThatDropdownSheetStarts + 1;
+  var today = new Date();
+  var sheetInd = rowThatDropdownSheetStarts + 1;
 
-    var addCol;
-    var addRow = findAddRow(typeSheet, today);
+  var addCol;
+  var addRow = findAddRow(typeSheet, today);
 
-    if (checkOrRes.getValue() == "CHECK"){
-      addCol = findAddCol(typeSheet, expenseType.getValue(), needOrWantOrReimb.getValue());
-    }
-    //RES
-    else {
-      addCol = resOutCol;
-    }
-
-    //finds row of chosen expense type in expTypeList & modifies targetted note accordingly
-    if (expenseNoteType.getValue() != "N/A") {
-      //Reset the notes of specified cell
-      typeSheet.getRange(addRow, addCol).setNote("");
-      while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, 33).getValue() != "") {
-        var finEq = typeSheet.getRange(sheetInd, colWithBrokeDownCost);
-        var finCost = typeSheet.getRange(sheetInd, colWithExpTotCost);
-        var expType = typeSheet.getRange(sheetInd, colWithExpTypeNames);
-        var reimbOrNot = typeSheet.getRange(sheetInd, colWithReimbMark);
-
-        if (expType.getValue() == expenseNoteType.getValue()) {
-          //Finding final equation, final cost and modifying it into existing targetted note
-          finEq.setValue(finEq.getValue() + "+" + amount.getValue());
-          finCost.setValue(finCost.getValue() + amount.getValue());
-
-          //additional tilde if in reimb and is false
-          if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
-            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expenseNoteType.getValue() + "\n");
-          }
-          else {
-            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expenseNoteType.getValue() + "\n");
-          }
-        }
-        else {
-          if (finEq.getValue() == finCost.getValue()) {
-            //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
-            if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
-              //in reimb and isnt paid bk
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + ": " + expType.getValue() + "\n");
-            } 
-            else {
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
-            }
-          } 
-          else {
-            //equation and total cost aren't the same string
-            if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
-              //in reimb and isnt paid bk
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
-            } 
-            else {
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
-            }
-          }
-        }
-        sheetInd++;
-      }
-    }
-    else {
-      //add new expense type entry into targetted notes
-      if (needOrWantOrReimb.getValue() == "REIMB") {
-        typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + "~ " + amount.getValue() + ": " + newExpenseNoteType.getValue() + "\n");
-      } else {
-        typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + amount.getValue() + ": " + newExpenseNoteType.getValue() + "\n");
-      }
-    }
-    return;
+  if (checkOrRes.getValue() == "CHECK"){
+    addCol = findAddCol(typeSheet, expenseType.getValue(), needOrWantOrReimb.getValue());
+  }
+  //RES
+  else {
+    addCol = resOutCol;
   }
 
-
-  //modifies specified in note w/ updated info
-  function inNoteMod(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet){
-
-    var today = new Date();
-    var sheetInd = rowThatDropdownSheetStarts + 1;
-
-    var addCol;
-    var addRow = findAddRow(typeSheet, today);
-
-    if (checkOrRes.getValue() == "RES"){
-      if (fixedOrNot.getValue() == "FIXED") {
-        addCol = resFixedCol;
-      }
-      //NON-FIXED
-      else {
-        addCol = resNonFixedCol;
-      }
-    }
-    //CHECK
-    else {
-      addCol = checkInCol;
-    }
-
-    //finds row of chosen expense type in expTypeList & modifies targetted note accordingly
-    if (incomeNoteType.getValue() != "N/A") {
-      //Reset the notes of specified cell
-      typeSheet.getRange(addRow, addCol).setNote("");
-      while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "") {
-        var finEq = typeSheet.getRange(sheetInd, colWithBrokeDownCost);
-        var finInc = typeSheet.getRange(sheetInd, colWithExpTotCost);
-        var incType = typeSheet.getRange(sheetInd, colWithExpTypeNames);
-
-        if (incType.getValue() == incomeNoteType.getValue()) {
-          //Finding final equation, final cost and modifying it into existing targetted note
-          finEq.setValue(finEq.getValue() + "+" + amount.getValue());
-          finInc.setValue(finInc.getValue() + amount.getValue());
-
-          typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finInc.getValue() + "): " + incomeNoteType.getValue() + "\n");
-        }
-        else {
-          if (finEq.getValue() == finInc.getValue()) {
-            //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + ": " + incType.getValue() + "\n");
-          } 
-          else {
-            //equation and total cost aren't the same string
-              typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finInc.getValue() + "): " + incType.getValue() + "\n");
-          }
-        }
-        sheetInd++;
-      }
-    }
-    else {
-      //add new expense type entry into targetted notes
-        typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + amount.getValue() + ": " + newIncomeNoteType.getValue() + "\n");
-    }
-    return;
-  }
-
-
-  //modifies specified reimb note w/ updated info
-  function alrReimbedNoteMod(year, month, nonReimbCell, typeSheet) {
-    var monthRow = findAddRow(typeSheet, new Date(year.getValue(), month.getValue() - 1));
-    var nonReimbEntry = nonReimbCell.getValue().split(": ");
-    var sheetInd = rowThatDropdownSheetStarts + 1;
-    var targetSheetInd;
-    var foundReimbContent = false;
-
-    //finds cell to reimb
-    while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "" && foundReimbContent == false) {
-      console.log(typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue()+" "+nonReimbEntry[1]);
-      if (typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() == nonReimbEntry[1]) {
-        foundReimbContent = true;
-        typeSheet.getRange(sheetInd, colWithReimbMark).setValue(true);
-        targetSheetInd = sheetInd;
-      }
-      sheetInd++;
-    }
-
+  //finds row of chosen expense type in expTypeList & modifies targetted note accordingly
+  if (expenseNoteType.getValue() != "N/A") {
     //Reset the notes of specified cell
-    typeSheet.getRange(monthRow, checkReimbOutCol).setNote("");
-
-    //adds notes bk into reimb out column
-    sheetInd = rowThatDropdownSheetStarts + 1;
-    while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "") {
-
+    typeSheet.getRange(addRow, addCol).setNote("");
+    while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, 33).getValue() != "") {
       var finEq = typeSheet.getRange(sheetInd, colWithBrokeDownCost);
       var finCost = typeSheet.getRange(sheetInd, colWithExpTotCost);
       var expType = typeSheet.getRange(sheetInd, colWithExpTypeNames);
       var reimbOrNot = typeSheet.getRange(sheetInd, colWithReimbMark);
 
-      if (finEq.getValue() == finCost.getValue()) {
-        //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")
-        if (reimbOrNot.getValue() == false) {
-          typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + "~ " + finEq.getValue() + ": " + expType.getValue() + "\n");
-        } else {
-          typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
+      if (expType.getValue() == expenseNoteType.getValue()) {
+        //Finding final equation, final cost and modifying it into existing targetted note
+        finEq.setValue(finEq.getValue() + "+" + amount.getValue());
+        finCost.setValue(finCost.getValue() + amount.getValue());
+
+        //additional tilde if in reimb and is false
+        if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
+          typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expenseNoteType.getValue() + "\n");
         }
-      } else {
-        //equation and total cost aren't the same string
-        if (reimbOrNot.getValue() == false) {
-          typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
-        } else {
-          typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
+        else {
+          typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expenseNoteType.getValue() + "\n");
+        }
+      }
+      else {
+        if (finEq.getValue() == finCost.getValue()) {
+          //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
+          if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
+            //in reimb and isnt paid bk
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + ": " + expType.getValue() + "\n");
+          } 
+          else {
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
+          }
+        } 
+        else {
+          //equation and total cost aren't the same string
+          if (needOrWantOrReimb.getValue() == "REIMB" && reimbOrNot.getValue() == false) {
+            //in reimb and isnt paid bk
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
+          } 
+          else {
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
+          }
         }
       }
       sheetInd++;
     }
+  }
+  else {
+    //add new expense type entry into targetted notes
+    if (needOrWantOrReimb.getValue() == "REIMB") {
+      typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + "~ " + amount.getValue() + ": " + newExpenseNoteType.getValue() + "\n");
+    } else {
+      typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + amount.getValue() + ": " + newExpenseNoteType.getValue() + "\n");
+    }
+  }
+  return;
+}
 
-    //add new reimbed entry into reimb in column
-    var finEq = typeSheet.getRange(targetSheetInd, colWithBrokeDownCost);
-    var finCost = typeSheet.getRange(targetSheetInd, colWithExpTotCost);
-    var expType = typeSheet.getRange(targetSheetInd, colWithExpTypeNames);
+
+//modifies specified in note w/ updated info
+function inNoteMod(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet){
+
+  var today = new Date();
+  var sheetInd = rowThatDropdownSheetStarts + 1;
+
+  var addCol;
+  var addRow = findAddRow(typeSheet, today);
+
+  if (checkOrRes.getValue() == "RES"){
+    if (fixedOrNot.getValue() == "FIXED") {
+      addCol = resFixedCol;
+    }
+    //NON-FIXED
+    else {
+      addCol = resNonFixedCol;
+    }
+  }
+  //CHECK
+  else {
+    addCol = checkInCol;
+  }
+
+  //finds row of chosen expense type in expTypeList & modifies targetted note accordingly
+  if (incomeNoteType.getValue() != "N/A") {
+    //Reset the notes of specified cell
+    typeSheet.getRange(addRow, addCol).setNote("");
+    while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "") {
+      var finEq = typeSheet.getRange(sheetInd, colWithBrokeDownCost);
+      var finInc = typeSheet.getRange(sheetInd, colWithExpTotCost);
+      var incType = typeSheet.getRange(sheetInd, colWithExpTypeNames);
+
+      if (incType.getValue() == incomeNoteType.getValue()) {
+        //Finding final equation, final cost and modifying it into existing targetted note
+        finEq.setValue(finEq.getValue() + "+" + amount.getValue());
+        finInc.setValue(finInc.getValue() + amount.getValue());
+
+        typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finInc.getValue() + "): " + incomeNoteType.getValue() + "\n");
+      }
+      else {
+        if (finEq.getValue() == finInc.getValue()) {
+          //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + ": " + incType.getValue() + "\n");
+        } 
+        else {
+          //equation and total cost aren't the same string
+            typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote() + finEq.getValue() + " (" + finInc.getValue() + "): " + incType.getValue() + "\n");
+        }
+      }
+      sheetInd++;
+    }
+  }
+  else {
+    //add new expense type entry into targetted notes
+      typeSheet.getRange(addRow, addCol).setNote(typeSheet.getRange(addRow, addCol).getNote().toString() + amount.getValue() + ": " + newIncomeNoteType.getValue() + "\n");
+  }
+  return;
+}
+
+
+//modifies specified reimb note w/ updated info
+function alrReimbedNoteMod(year, month, nonReimbCell, typeSheet) {
+  var monthRow = findAddRow(typeSheet, new Date(year.getValue(), month.getValue() - 1));
+  var nonReimbEntry = nonReimbCell.getValue().split(": ");
+  var sheetInd = rowThatDropdownSheetStarts + 1;
+  var targetSheetInd;
+  var foundReimbContent = false;
+
+  //finds cell to reimb
+  while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "" && foundReimbContent == false) {
+    console.log(typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue()+" "+nonReimbEntry[1]);
+    if (typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() == nonReimbEntry[1]) {
+      foundReimbContent = true;
+      typeSheet.getRange(sheetInd, colWithReimbMark).setValue(true);
+      targetSheetInd = sheetInd;
+    }
+    sheetInd++;
+  }
+
+  //Reset the notes of specified cell
+  typeSheet.getRange(monthRow, checkReimbOutCol).setNote("");
+
+  //adds notes bk into reimb out column
+  sheetInd = rowThatDropdownSheetStarts + 1;
+  while (sheetInd <= typeSheet.getLastRow() && typeSheet.getRange(sheetInd, colWithExpTypeNames).getValue() != "") {
+
+    var finEq = typeSheet.getRange(sheetInd, colWithBrokeDownCost);
+    var finCost = typeSheet.getRange(sheetInd, colWithExpTotCost);
+    var expType = typeSheet.getRange(sheetInd, colWithExpTypeNames);
+    var reimbOrNot = typeSheet.getRange(sheetInd, colWithReimbMark);
+
     if (finEq.getValue() == finCost.getValue()) {
-      //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
-      typeSheet.getRange(monthRow, checkReimbInCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
+      //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")
+      if (reimbOrNot.getValue() == false) {
+        typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + "~ " + finEq.getValue() + ": " + expType.getValue() + "\n");
+      } else {
+        typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
+      }
     } else {
       //equation and total cost aren't the same string
-      typeSheet.getRange(monthRow, checkReimbInCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
-    }
-    addMoney(monthRow, checkReimbInCol, Number(nonReimbEntry[0]), typeSheet);
-    checkReimb(year, month, nonReimbCell, )
-  }
-
-
-  //Print all notes cost and exp type (given it isn't empty)
-  function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
-    //clears expCost & expList for a new uninterrupted list (hidden)
-    typeSheet.getRange(rowThatDropdownSheetStarts + 1, colWithBrokeDownCost, typeSheet.getLastRow() - rowThatDropdownSheetStarts, 4).clearContent();
-
-    //Print all notes cost and exp type (given it isn't empty)
-    var notes = typeSheet.getRange(addRow, addCol).getNotes().toString().split("\n");
-    var noteInd = 0;
-    var sheetInd = rowThatDropdownSheetStarts + 1;
-    while (noteInd < notes.length && sheetInd <= typeSheet.getLastRow()) {
-      if (notes[noteInd].length > 0) {
-        //line isn't empty (handling user typo error)
-        var tempEntry = notes[noteInd].split(": ");
-
-        //split the total cost & equation w/o tilde (if exists)
-        var tempCostEntry = tempEntry[0].replace(")", "").replace("~", "").split(" (");
-
-        //if note in reimb, split the tilde (if it exists)
-        var reimbedOrNot = tempEntry[0].split(" ");
-        if (needOrWantOrReimb.getValue() == "REIMB" && reimbedOrNot[0] == "~") {
-          //tilde; hence not reimbed
-          typeSheet.getRange(sheetInd, colWithReimbMark).setValue(false);
-        } 
-        else {
-          //not in reimb column or alr reimbed
-          typeSheet.getRange(sheetInd, colWithReimbMark).setValue(true);
-        }
-
-        //put values in respective columns
-        typeSheet.getRange(sheetInd, colWithBrokeDownCost).setValue(tempCostEntry[0]);
-
-        //no formula exists (1 cost)
-        if (tempCostEntry[1] == null) {
-          typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[0])
-        } 
-        else {
-          //a formula exists
-          typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[1])
-        }
-        typeSheet.getRange(sheetInd, colWithExpTypeNames).setValue(tempEntry[1]);
-        noteInd++;
-        sheetInd++;
-      } 
-      else {
-        //skip empty lines
-        noteInd++;
+      if (reimbOrNot.getValue() == false) {
+        typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbOutCol).getNote() + "~ " + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
+      } else {
+        typeSheet.getRange(monthRow, checkReimbOutCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
       }
     }
-    return;
+    sheetInd++;
   }
+
+  //add new reimbed entry into reimb in column
+  var finEq = typeSheet.getRange(targetSheetInd, colWithBrokeDownCost);
+  var finCost = typeSheet.getRange(targetSheetInd, colWithExpTotCost);
+  var expType = typeSheet.getRange(targetSheetInd, colWithExpTypeNames);
+  if (finEq.getValue() == finCost.getValue()) {
+    //prevent notes where the total cost and the sum is the same (ex: "50 (50): TEST")  
+    typeSheet.getRange(monthRow, checkReimbInCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + ": " + expType.getValue() + "\n");
+  } else {
+    //equation and total cost aren't the same string
+    typeSheet.getRange(monthRow, checkReimbInCol).setNote(typeSheet.getRange(monthRow, checkReimbInCol).getNote() + finEq.getValue() + " (" + finCost.getValue() + "): " + expType.getValue() + "\n");
+  }
+  addMoney(monthRow, checkReimbInCol, Number(nonReimbEntry[0]), typeSheet);
+  checkReimb(year, month, nonReimbCell, )
+}
+
+
+//Print all notes cost and exp type (given it isn't empty)
+function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
+  //clears expCost & expList for a new uninterrupted list (hidden)
+  typeSheet.getRange(rowThatDropdownSheetStarts + 1, colWithBrokeDownCost, typeSheet.getLastRow() - rowThatDropdownSheetStarts, 4).clearContent();
+
+  //Print all notes cost and exp type (given it isn't empty)
+  var notes = typeSheet.getRange(addRow, addCol).getNotes().toString().split("\n");
+  var noteInd = 0;
+  var sheetInd = rowThatDropdownSheetStarts + 1;
+  while (noteInd < notes.length && sheetInd <= typeSheet.getLastRow()) {
+    if (notes[noteInd].length > 0) {
+      //line isn't empty (handling user typo error)
+      var tempEntry = notes[noteInd].split(": ");
+
+      //split the total cost & equation w/o tilde (if exists)
+      var tempCostEntry = tempEntry[0].replace(")", "").replace("~", "").split(" (");
+
+      //if note in reimb, split the tilde (if it exists)
+      var reimbedOrNot = tempEntry[0].split(" ");
+      if (needOrWantOrReimb.getValue() == "REIMB" && reimbedOrNot[0] == "~") {
+        //tilde; hence not reimbed
+        typeSheet.getRange(sheetInd, colWithReimbMark).setValue(false);
+      } 
+      else {
+        //not in reimb column or alr reimbed
+        typeSheet.getRange(sheetInd, colWithReimbMark).setValue(true);
+      }
+
+      //put values in respective columns
+      typeSheet.getRange(sheetInd, colWithBrokeDownCost).setValue(tempCostEntry[0]);
+
+      //no formula exists (1 cost)
+      if (tempCostEntry[1] == null) {
+        typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[0])
+      } 
+      else {
+        //a formula exists
+        typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[1])
+      }
+      typeSheet.getRange(sheetInd, colWithExpTypeNames).setValue(tempEntry[1]);
+      noteInd++;
+      sheetInd++;
+    } 
+    else {
+      //skip empty lines
+      noteInd++;
+    }
+  }
+  return;
+}
