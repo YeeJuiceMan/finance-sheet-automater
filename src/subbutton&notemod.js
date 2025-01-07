@@ -900,8 +900,8 @@ function findAddRowForSpecHide(sheet, today) {
 //finds range of values and the length of the range; returns array with start, end, length, and row of month given date
 function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
   //find row of month in hide menu
-  let monthRow = findAddRowForSpecHide(hideSheet, date);
-
+  var monthRow = findAddRowForSpecHide(hideSheet, date);
+  Logger.log(monthRow);
   //find range of rows a month holds
   let lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
   let startRow = hideSheet.getRange(monthRow - 1, monthEndRowsListCol).getValue() + 1;
