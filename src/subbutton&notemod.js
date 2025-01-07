@@ -256,7 +256,13 @@ wantEndSpec = 98,
 checkReimbOutColSpec = 99;
 
 //sheet vars
-mainSpreadSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177"),
+const spreadSheetGlobalConfig = {
+  get spreadsheet() {
+    delete this.spreadsheet;
+    return (this.spreadsheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"));
+  },
+};
+mainSpreadSheet = spreadSheetGlobalConfig.spreadsheet,
 consoleSheet = mainSpreadSheet.getSheetByName("Console"),
 usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
 twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
