@@ -256,7 +256,7 @@ wantEndSpec = 98,
 checkReimbOutColSpec = 99;
 
 //sheet vars
-mainSpreadSheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"),
+mainSpreadSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177"),
 consoleSheet = mainSpreadSheet.getSheetByName("Console"),
 usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
 twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
@@ -618,7 +618,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet)
 //----------spec sheet mods----------//
 
 
-function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardType, expenseNoteType, newExpenseNoteType, expenseType, monthEndRowsListCol, specSheet, hideSheet) {
+function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardType, expenseNoteType, newExpenseNoteType, expenseType, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
@@ -653,7 +653,7 @@ function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardTyp
   ccolWithReimbMark = ccolWithDate + 5; //may or may not be used
 
   //finding range of month in spec sheet to find target row
-  let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
   totalMonthLen = rangeArr[2],
