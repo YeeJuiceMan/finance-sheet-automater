@@ -468,7 +468,6 @@ function onTrigger(e) {
   wantStartSpec = 69,
   wantEndSpec = 98,
   checkReimbOutColSpec = 99;
-  type 
 
 //----------button action----------//
 
