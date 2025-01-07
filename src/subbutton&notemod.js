@@ -147,8 +147,6 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
 
       var tempCostEntry = tempEntry[0].replace(")", "").replace("~", "").split(" (")
       Logger.log("total cost " + tempCostEntry);
-      //var tempFormulaRegex = new RegExp("(?:@\w?\d?\s*)?(\d+(?:\.\d+)?)");
-      //var tempFormulaEntry = tempFormulaRegex.exec(tempCostEntry[0]);
       var tempFormulaEntry = tempCostEntry[0].replace(/@([A-Z]+\w*)/, "").trim();
       Logger.log("formula " + tempFormulaEntry);
 
@@ -176,7 +174,7 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
       //no formula exists (1 cost)
       if (tempCostEntry[1] == null && tempFormulaEntry != null) {
         specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempFormulaEntry)
-      } 
+      }
       else {
         //a formula exists
         specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempCostEntry[1])
@@ -474,8 +472,8 @@ function onTrigger(e) {
 //adds out val to chosen cell given parameters
 function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expenseNoteType, newExpenseNoteType, dayVal, typeSheet, specSheet, hideSheet) {
 
-  let today = new Date(),
-  addRow = findAddRow(typeSheet, today),
+  let today = new Date();
+  let addRow = findAddRow(typeSheet, today),
   addCol,
   addColSpec, //for dropdown list
   expenseTypeVal = expenseType.getValue(),
@@ -515,10 +513,10 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   addMoney(addRow, addCol, amount.getValue(), typeSheet);
 
   //vars for dropdown
-  let rangeArr = findSpecMonthRange(hideSheet, today, 5),
-  addRowSpec = rangeArr[0],
-  addRowSpecLen = rangeArr[2],
-  dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
+  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
+  let addRowSpec = rangeArr[0],
+  addRowSpecLen = rangeArr[2];
+  let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
   //clear new expense type cell & revalidate expnotetype dropdown list
@@ -532,8 +530,8 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
 //adds in val to chosen cell given parameters
 function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet, specSheet, hideSheet){
 
-  let today = new Date(),
-  addRow = findAddRow(typeSheet, today),
+  let today = new Date();
+  let addRow = findAddRow(typeSheet, today),
   addCol,
   addColSpec, //for dropdown list
   fixedOrNotVal = fixedOrNot.getValue();
@@ -555,10 +553,10 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
   addMoney(addRow, addCol, amount.getValue(), typeSheet); // adds amount to curr eqn
 
   //vars for dropdown
-  let rangeArr = findSpecMonthRange(hideSheet, today, 5),
-  addRowSpec = rangeArr[0],
-  addRowSpecLen = rangeArr[2],
-  dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
+  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
+  let addRowSpec = rangeArr[0],
+  addRowSpecLen = rangeArr[2];
+  let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
   //clear new income type cell & revalidate incomenotetype dropdown list
@@ -574,13 +572,13 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
 function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet) {
 
   //month range
-  let rangeArr = findSpecMonthRange(hideSheet, new Date(year.getValue(), month.getValue() - 1), 5),
-  monthRowInd = rangeArr[0],
+  let rangeArr = findSpecMonthRange(hideSheet, new Date(year.getValue(), month.getValue() - 1), 5);
+  let monthRowInd = rangeArr[0],
   monthEndRow = rangeArr[1];
 
   //find cols with expense type names & reimb mark
-  let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes.getValue(), "spec") + 2, //expense type param ignored
-  expTypeColSpec = totCostColSpec + 1, //expense type param ignored
+  let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes.getValue(), "spec") + 2; //expense type param ignored
+  let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColSpec + 3,
 
   //create array of non-reimbed items w/ N/A as default
@@ -607,13 +605,15 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet)
 //----------spec sheet mods----------//
 
 
-function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, reimbOrNot, monthEndRowsListCol, expenseType, specSheet, hideSheet) {
+function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, monthEndRowsListCol, expenseType, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
   expenseTypeVal = expenseType.getValue(),
   needOrWantOrReimbVal = needOrWantOrReimb.getValue();
-  if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT"; //for readability
+
+  //for readability
+  if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES
   if (checkOrRes.getValue() == "RES") {
@@ -636,21 +636,24 @@ function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, reimbOrNot, monthE
   ccolWithExpTotCost = ccolWithDate + 2,
   ccolWithExpTypeNames = ccolWithDate + 3,
   ccolWithCardType = ccolWithDate + 4,
-  ccolWithReimbMark = ccolWithDate + 5, //may or may not be used
+  ccolWithReimbMark = ccolWithDate + 5; //may or may not be used
 
   //finding range of month in spec sheet
-  rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol),
-  startRow = rangeArr[0],
+  let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol);
+  let startRow = rangeArr[0],
   lastRow = rangeArr[1],
   totalMonthLen = rangeArr[2],
-  sheetInd = startRow;
+  targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, 5, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
-    totalMonthLen = lastRow - startRow + 1;
+    totalMonthLen++;
+    targetRow = lastRow;
   }
+  else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //finds first blank row
+
 
   //if in reimb set default reimb to false (will set true by reimb button)
   if (needOrWantOrReimbVal == "REIMB OUT") specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(false);
@@ -787,14 +790,14 @@ function findAddRow(sheet, today) {
       addRow = monthRowFinder(4, 7, today);
     }
     else { //finds normally
-      let baseYear = 2023,
-      startRow = 8 + ((currYear - baseYear) * 12);
+      let baseYear = 2023;
+      let startRow = 8 + ((currYear - baseYear) * 12);
       addRow = monthRowFinder(startRow, startRow + 11, today);
     }
   }
   else if (sheet.getName() == "College Savings 3.0 (TW)") {
-    let baseYear = 2023,
-    startRow = 4 + ((currYear - baseYear) * 12);
+    let baseYear = 2023;
+    let startRow = 4 + ((currYear - baseYear) * 12);
     addRow = monthRowFinder(startRow, startRow + 11, today);
   }
   return addRow;
@@ -804,13 +807,13 @@ function findAddRow(sheet, today) {
 //loop to find col num of expense type spec or type
 function needWantLoop(start, end, sheet, expenseType, typeOrSpec) {
   if (typeOrSpec == "type") {
-    for (i = start; i <= end; i++) {
+    for (let i = start; i <= end; i++) {
       if (sheet.getRange(3, i).getValue() == expenseType) {
         return i;
       }
     }
   } else if (typeOrSpec == "spec") {
-    for (i = start; i <= end; i+=5) {
+    for (let i = start; i <= end; i+=5) {
       if (sheet.getRange(3, i).getValue() == expenseType) {
         return i;
       }
@@ -823,10 +826,10 @@ function needWantLoop(start, end, sheet, expenseType, typeOrSpec) {
 //adds rows to specific months and years for additional entries for spec sheets
 function addEntryRow(today, monthEndRowsListCol, lastColWithData, sheet, hideSheet){
   //find row of month in hide menu
-  let row = findAddRowForSpecHide(hideSheet, today),
+  let row = findAddRowForSpecHide(hideSheet, today);
 
   //find range of rows a month holds
-  lastRow = hideSheet.getRange(row, monthEndRowsListCol).getValue(),
+  let lastRow = hideSheet.getRange(row, monthEndRowsListCol).getValue(),
   prevLastRow = hideSheet.getRange(row - 1, monthEndRowsListCol).getValue() + 1;
 
   //add row after last row of chosen month
@@ -844,11 +847,11 @@ function addEntryRow(today, monthEndRowsListCol, lastColWithData, sheet, hideShe
     else tempDay = new Date(today.getFullYear(), 0);
 
     //find first row & new extended last row of year
-    let tempRow = findAddRowForSpecHide(hideSheet, tempDay) - 1,
-    yearStartRow = hideSheet.getRange(tempRow, monthEndRowsListCol).getValue() + 1,
+    let tempRow = findAddRowForSpecHide(hideSheet, tempDay) - 1;
+    let yearStartRow = hideSheet.getRange(tempRow, monthEndRowsListCol).getValue() + 1;
 
     //get A1 notation of respective cells and merge
-    yearStartCell = sheet.getRange(yearStartRow, 1).getA1Notation(),
+    let yearStartCell = sheet.getRange(yearStartRow, 1).getA1Notation(),
     curYearCell = sheet.getRange(lastRow + 1, 1).getA1Notation();
     sheet.getRange(yearStartCell+":"+curYearCell).merge();
   }
@@ -857,9 +860,9 @@ function addEntryRow(today, monthEndRowsListCol, lastColWithData, sheet, hideShe
   sheet.getRange(prevCell+":"+curCell).merge();
 
   //increment all row values by 1 below the extended month
-  let rangeToUpdate = hideSheet.getRange(row, monthEndRowsListCol, 58 - row, 1),
-  rowValues = rangeToUpdate.getValues(),
-  updatedValues = rowValues.map(function(rows) {
+  let rangeToUpdate = hideSheet.getRange(row, monthEndRowsListCol, 58 - row, 1);
+  let rowValues = rangeToUpdate.getValues();
+  let updatedValues = rowValues.map(function(rows) {
     return [rows[0] + 1];
   });
   rangeToUpdate.setValues(updatedValues);
@@ -883,8 +886,8 @@ function findAddRowForSpecHide(sheet, today) {
       addRow = monthRowFinder(6, 9, today);
     }
     else { //finds normally
-      let baseYear = 2023,
-      startRow = 10 + ((currYear - baseYear) * 12);
+      let baseYear = 2023;
+      let startRow = 10 + ((currYear - baseYear) * 12);
       addRow = monthRowFinder(startRow, startRow + 11, today);
     }
   }
@@ -895,22 +898,22 @@ function findAddRowForSpecHide(sheet, today) {
 //finds range of values and the length of the range; returns array with start, end, length, and row of month given date
 function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
   //find row of month in hide menu
-  let monthRow = findAddRowForSpecHide(hideSheet, date),
+  let monthRow = findAddRowForSpecHide(hideSheet, date);
 
   //find range of rows a month holds
-  lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue(),
-  startRow = hideSheet.getRange(monthRow - 1, monthEndRowsListCol).getValue() + 1,
-  totalMonthLen = lastRow - startRow + 1;
+  let lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
+  let startRow = hideSheet.getRange(monthRow - 1, monthEndRowsListCol).getValue() + 1;
+  let totalMonthLen = lastRow - startRow + 1;
   return [startRow, lastRow, totalMonthLen, monthRow];
 }
 
 
 //hides certain rows or col entries based on pressed buttons
 function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonColToStartChecking, rowOrCol){
-    let buttonRow = activeCell.getRow(),
+    let buttonRow = activeCell.getRow();
 
-    lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue(),
-    prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1;
+    let lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue();
+    let prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1;
 
     if (activeVal == true) {
       if (rowOrCol == "row") {
@@ -935,6 +938,22 @@ function monthRowFinder(start, end, today) {
   return finalAddRow;
 }
 
+//finds first blank row in a given range of rows
+function findFirstBlankRow(sheet, startRow, endRow, col) {
+  while (startRow <= endRow) {
+    let mid = Math.floor((startRow + endRow) / 2);
+    if (sheet.getRange(mid, col).isBlank()) {
+      if (sheet.getRange(mid - 1, col).isBlank()) { //if the row before is blank, set new end row
+        endRow = mid - 1;
+      } else {
+        return mid; //first blank row found
+      }
+    } else {
+      startRow = mid + 1; //if not blank, set new start row
+    }
+  }
+  return -1; //no blank row found
+}
 
 //----------note modding; will be left here for the benefit of the reader----------//
 
