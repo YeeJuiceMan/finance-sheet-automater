@@ -1,3 +1,4 @@
 src/.clasp.json
 src/appsscript.json
 push_script.ps1
+.vscode
