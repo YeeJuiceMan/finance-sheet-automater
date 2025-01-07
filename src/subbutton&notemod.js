@@ -262,9 +262,8 @@ const spreadSheetConfig = {
     return (this.spreadsheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"));
   },
 };
-const mainSpreadSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177"),
-consoleSheet = mainSpreadSheet.getSheetByName("Console"),
-usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
+const mainSpreadSheet = spreadSheetConfig.spreadsheet;
+const usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
 twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
 usSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics"),
 usSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
