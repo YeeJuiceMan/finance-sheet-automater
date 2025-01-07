@@ -253,7 +253,53 @@ needStartSpec = 39,
 needEndSpec = 68,
 wantStartSpec = 69,
 wantEndSpec = 98,
-checkReimbOutColSpec = 99,
+checkReimbOutColSpec = 99;
+
+//sheet vars
+const spreadSheetConfig = {
+  get spreadsheet() {
+    delete this.spreadsheet;
+    return (this.spreadsheet = SpreadsheetApp.openById("1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA"));
+  },
+};
+const mainSpreadSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177"),
+consoleSheet = mainSpreadSheet.getSheetByName("Console"),
+usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
+twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
+usSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics"),
+usSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
+twSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics"),
+twSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"),
+
+//out var
+typeSheetOut = consoleSheet.getRange("B2:C3"),
+errorMsgOut = consoleSheet.getRange("B26"),
+checkOrResOut = consoleSheet.getRange("C5:C6"),
+needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
+expenseType = consoleSheet.getRange("C9:C10"),
+amountOut = consoleSheet.getRange("C11:C12"),
+expenseNoteType = consoleSheet.getRange("C13:C14"),
+newExpenseNoteType = consoleSheet.getRange("C15:C16"),
+creditType = consoleSheet.getRange("C17:C18"),
+usDayVal = consoleSheet.getRange("C22"),
+twDayVal = consoleSheet.getRange("C24"),
+
+//in var
+typeSheetIn = consoleSheet.getRange("E2:F3"),
+errorMsgIn = consoleSheet.getRange("E18"),
+checkOrResIn = consoleSheet.getRange("F5:F6"),
+fixedOrNot = consoleSheet.getRange("F7:F8"),
+amountIn = consoleSheet.getRange("F9:F10"),
+incomeNoteType = consoleSheet.getRange("F11:F12"),
+newIncomeNoteType = consoleSheet.getRange("F13:F14"),
+
+//reimb var
+typeSheetReimb = consoleSheet.getRange("H2:I3"),
+errorMsgReimb = consoleSheet.getRange("H16"),
+year = consoleSheet.getRange("I5:I6"),
+month = consoleSheet.getRange("I7:I8"),
+checkOrResReimb = consoleSheet.getRange("I9:I10"),
+nonReimbCell = consoleSheet.getRange("I11:I12"),
 
 //extras
 usMonthEndRowListCol = 5;
@@ -276,48 +322,7 @@ function onTrigger(e) {
     const activeCell = e.range,
     reference = activeCell.getA1Notation(),
     activeVal = activeCell.getValue(),
-    refArr = reference.split(''),
-
-    //sheet vars
-    mainSpreadSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177"),
-    consoleSheet = mainSpreadSheet.getSheetByName("Console"),
-    usSheet = mainSpreadSheet.getSheetByName("College Savings 3.0"),
-    twSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW)"),
-    usSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics"),
-    usSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
-    twSpecSheet = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics"),
-    twSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"),
-
-    //out var
-    typeSheetOut = consoleSheet.getRange("B2:C3"),
-    errorMsgOut = consoleSheet.getRange("B26"),
-    checkOrResOut = consoleSheet.getRange("C5:C6"),
-    needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
-    expenseType = consoleSheet.getRange("C9:C10"),
-    amountOut = consoleSheet.getRange("C11:C12"),
-    expenseNoteType = consoleSheet.getRange("C13:C14"),
-    newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-    creditType = consoleSheet.getRange("C17:C18"),
-    usDayVal = consoleSheet.getRange("C22"),
-    twDayVal = consoleSheet.getRange("C24"),
-
-    //in var
-    typeSheetIn = consoleSheet.getRange("E2:F3"),
-    errorMsgIn = consoleSheet.getRange("E18"),
-    checkOrResIn = consoleSheet.getRange("F5:F6"),
-    fixedOrNot = consoleSheet.getRange("F7:F8"),
-    amountIn = consoleSheet.getRange("F9:F10"),
-    incomeNoteType = consoleSheet.getRange("F11:F12"),
-    newIncomeNoteType = consoleSheet.getRange("F13:F14"),
-
-    //reimb var
-    typeSheetReimb = consoleSheet.getRange("H2:I3"),
-    errorMsgReimb = consoleSheet.getRange("H16"),
-    year = consoleSheet.getRange("I5:I6"),
-    month = consoleSheet.getRange("I7:I8"),
-    checkOrResReimb = consoleSheet.getRange("I9:I10"),
-    nonReimbCell = consoleSheet.getRange("I11:I12");
-
+    refArr = reference.split('');
 
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
