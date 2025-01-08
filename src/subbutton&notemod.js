@@ -259,7 +259,7 @@ checkReimbOutColSpec = 99;
 const spreadSheetConfig = {
   get spreadsheet() {
     delete this.spreadsheet;
-    return (this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet());
+    return (this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet()); //running under the assumption that this is a bound script
   },
 };
 const mainSpreadSheet = spreadSheetConfig.spreadsheet;
