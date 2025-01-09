@@ -649,7 +649,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   //CHECK col finding
   else {
     //find col of targeted cell given N/W/R & exp type
-    ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec") + 3; //by default settles on date col
+    ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec"); //by default settles on date col
   }
 
   //other cols relative to found one (reimb is exception)
@@ -663,14 +663,12 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
-  totalMonthLen = rangeArr[2],
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, 5, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
-    totalMonthLen++;
     targetRow = lastRow;
   }
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
