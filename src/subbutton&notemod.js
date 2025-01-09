@@ -680,7 +680,8 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
 
   //cell vars for readability
-  let brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
+  let dateCell = specSheet.getRange(targetRow, ccolWithDate),
+  brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
   totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost),
   expTypeCell = specSheet.getRange(targetRow, ccolWithExpTypeNames),
   creditCell = specSheet.getRange(targetRow, ccolWithCardType),
@@ -693,11 +694,12 @@ function subModSpecSheet(date, specSheet, hideSheet) {
     creditCell.setValue(creditTypeVal); //set credit type
     if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
     expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new
+    dateCell.setValue(date); //set date
   }
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     let newTargetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithExpTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
-    Logger.log(newTargetRow);
+
     //re-find the range with the new target row for comparisons
     creditCell = specSheet.getRange(newTargetRow, ccolWithCardType),
     reimbCell = specSheet.getRange(newTargetRow, ccolWithReimbMark);
@@ -713,19 +715,21 @@ function subModSpecSheet(date, specSheet, hideSheet) {
       creditCell.setValue(creditTypeVal); //set credit type
       if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
       expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new
+      dateCell.setValue(date); //set date
     }
     else { //exact same entry with a new cost
       //update remaining cells to new target row
+      dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
       brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
       totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost),
       expTypeCell = specSheet.getRange(newTargetRow, ccolWithExpTypeNames);
 
       brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
       totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
+      dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
     }
   }
 
-  specSheet.getRange(targetRow, ccolWithDate).setValue(date); //set date (force updates existing entry to recently modified date)
 
   let dropdownArr = specSheet.getRange(startRow, ccolWithExpTypeNames, totalMonthLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
