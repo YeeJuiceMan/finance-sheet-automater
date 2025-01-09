@@ -387,7 +387,7 @@ function onButtonTrigger(e) {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
           subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
-          outNoteMod(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twSheet);
+          subModSpecSheet(new Date(), twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgOut.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
@@ -703,6 +703,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
     ) expTypeCell.setValue(expenseNoteTypeVal);
     else expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new if not conditions above
   }
+
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     targetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(targetRow, ccolWithExpTypeNames).getValue() && targetRow <= lastRow) targetRow++; //iterate to find the right row with the same exp type
