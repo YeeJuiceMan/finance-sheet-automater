@@ -667,12 +667,14 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
+  totalMonthLen = rangeArr[2],
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, 5, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
+    totalMonthLen++;
     targetRow = lastRow;
   }
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
@@ -695,7 +697,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     let newTargetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithExpTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
-
+    Logger.log(newTargetRow);
     //re-find the range with the new target row for comparisons
     creditCell = specSheet.getRange(newTargetRow, ccolWithCardType),
     reimbCell = specSheet.getRange(newTargetRow, ccolWithReimbMark);
@@ -724,6 +726,10 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   }
 
   specSheet.getRange(targetRow, ccolWithDate).setValue(date); //set date (force updates existing entry to recently modified date)
+
+  let dropdownArr = specSheet.getRange(startRow, ccolWithExpTypeNames, totalMonthLen, 1).getValues();
+  dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
+  expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build()); //revalidate expnotetype dropdown list
 
   return;
 }
