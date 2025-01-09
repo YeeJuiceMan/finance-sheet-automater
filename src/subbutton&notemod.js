@@ -693,9 +693,15 @@ function subModSpecSheet(date, specSheet, hideSheet) {
      ) {
     brokeDownCostCell.setValue(amountOutVal); //set cost
     totCostCell.setValue(amountOutVal); //set total cost the same as cost
-    expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type
     creditCell.setValue(creditTypeVal); //set credit type
+
     if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
+
+    if (expenseNoteTypeVal != "N/A" &&
+      (needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) ||
+      (creditCell.getValue() != creditTypeVal)
+    ) expTypeCell.setValue(expenseNoteTypeVal);
+    else expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new if not conditions above
   }
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     targetRow = startRow;
