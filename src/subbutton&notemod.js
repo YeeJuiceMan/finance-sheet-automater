@@ -676,11 +676,15 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
 
   let reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark); //reimb cell as it is used in multiple conditions
+  let creditCell = specSheet.getRange(targetRow, ccolWithCardType);
 
   //note entry dne or the entry exists but is already reimbed
-  if (expenseNoteTypeVal == "N/A" || (expenseNoteTypeVal != "N/A"
-                                      && needOrWantOrReimbVal == "REIMB OUT"
-                                      && reimbCell.getValue())) {
+  if (expenseNoteTypeVal == "N/A" ||
+        (expenseNoteTypeVal != "N/A" &&
+          (needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) ||
+          (creditCell.getValue() != creditType.getValue())
+        )
+     ) {
     specSheet.getRange(targetRow, ccolWithBrokeDownCost).setValue(amountOut.getValue()); //set cost
     specSheet.getRange(targetRow, ccolWithExpTotCost).setValue(amountOut.getValue()); //set total cost the same as cost
     specSheet.getRange(targetRow, ccolWithExpTypeNames).setValue(expenseType.getValue()); //set exp type
