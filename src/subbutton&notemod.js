@@ -296,8 +296,8 @@ newIncomeNoteType = consoleSheet.getRange("F13:F14"),
 //reimb var
 typeSheetReimb = consoleSheet.getRange("H2:I3"),
 errorMsgReimb = consoleSheet.getRange("H16"),
-year = consoleSheet.getRange("I5:I6"),
-month = consoleSheet.getRange("I7:I8"),
+reimbYear = consoleSheet.getRange("I5:I6"),
+reimbMonth = consoleSheet.getRange("I7:I8"),
 checkOrResReimb = consoleSheet.getRange("I9:I10"),
 nonReimbCell = consoleSheet.getRange("I11:I12"),
 
@@ -313,11 +313,11 @@ function onEdit(e) {
       + 'See https://stackoverflow.com/a/63851123/13045193.'
     );
   }
-  onTrigger(e);
+  onButtonTrigger(e);
 }
 
 
-function onTrigger(e) {
+function onButtonTrigger(e) {
   //basic event sheets var
     const activeCell = e.range,
     reference = activeCell.getA1Notation(),
@@ -361,9 +361,9 @@ function onTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
+          subButtonAct(usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { //will be changed later
-          subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twDayVal, twSheet, twSpecSheet, twSpecSheetHideMenu);
+          subButtonAct(twDayVal, twSheet, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgOut.setValue("Successfully added " + typeSheetOut.getValue() + " $" + amountOut.getValue() + ". Please input notes & press Green to continue.");
@@ -385,7 +385,7 @@ function onTrigger(e) {
 
         if (typeSheetOut.getValue() == "US") {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
-          subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu, reimbOrNot, usMonthEndRowListCol, expenseType, needOrWantOrReimb)
+          subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
           outNoteMod(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, twSheet);
         }
@@ -408,9 +408,9 @@ function onTrigger(e) {
         }
 
         if (typeSheetIn.getValue() == "US") {
-          addButtonAct(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, usSheet, usSpecSheet, usSpecSheetHideMenu)
+          addButtonAct(usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetIn.getValue() == "TW") {
-          addButtonAct(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, twSheet)
+          addButtonAct(twSheet, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgIn.setValue("Successfully added " + typeSheetIn.getValue() + " $" + amountIn.getValue() + ". Please input notes & press Green to continue.");
@@ -448,9 +448,9 @@ function onTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, usSpecSheet, usSpecSheetHideMenu)
+          needReimb = checkReimb(usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(year, month, nonReimbCell, checkOrResReimb, twSpecSheet, twSpecSheetHideMenu)
+          needReimb = checkReimb(twSpecSheet, twSpecSheetHideMenu)
         }
 
         if (needReimb == true) {
@@ -489,7 +489,7 @@ function onTrigger(e) {
 //----------button action----------//
 
 //adds out val to chosen cell given parameters
-function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expenseNoteType, newExpenseNoteType, dayVal, typeSheet, specSheet, hideSheet) {
+function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
 
   let today = new Date();
   let addRow = findAddRow(typeSheet, today),
@@ -500,7 +500,7 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES
-  if (checkOrRes.getValue() == "RES") {
+  if (checkOrResOut.getValue() == "RES") {
     if (needOrWantOrReimb == "REIMB OUT") {
       addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
@@ -527,9 +527,9 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
 
     //add daily val given it isn't reimb (daily expenses that is)
     var curDailyVal = dayVal.getValue();
-    if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amount.getValue());
+    if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amountOut.getValue());
   }
-  addMoney(addRow, addCol, amount.getValue(), typeSheet);
+  addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
 
   //vars for dropdown
   let rangeArr = findSpecMonthRange(hideSheet, today, 5);
@@ -547,7 +547,7 @@ function subButtonAct(checkOrRes, needOrWantOrReimb, expenseType, amount, expens
 }
 
 //adds in val to chosen cell given parameters
-function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeNoteType, typeSheet, specSheet, hideSheet){
+function addButtonAct(typeSheet, specSheet, hideSheet){
 
   let today = new Date();
   let addRow = findAddRow(typeSheet, today),
@@ -556,7 +556,7 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
   fixedOrNotVal = fixedOrNot.getValue();
 
   //CHECK
-  if (checkOrRes.getValue() == "CHECK") {
+  if (checkOrResIn.getValue() == "CHECK") {
     addCol = findAddCol(typeSheet, null, "IN", "CHECK", "type");
     addColSpec = findAddCol(typeSheet, null, "IN", "CHECK", "spec") + 3;
     fixedOrNot.setBackground("#999999");
@@ -569,7 +569,7 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
-  addMoney(addRow, addCol, amount.getValue(), typeSheet); // adds amount to curr eqn
+  addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
 
   //vars for dropdown
   let rangeArr = findSpecMonthRange(hideSheet, today, 5);
@@ -588,16 +588,16 @@ function addButtonAct(checkOrRes, fixedOrNot, amount, incomeNoteType, newIncomeN
 
 
 //checks reimb of specified year & date to see what isn't reimbed yet
-function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet) {
+function checkReimb(specSheet, hideSheet) {
 
   //month range
-  let chosenDate = new Date(year.getValue(), month.getValue() - 1);
+  let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
   let rangeArr = findSpecMonthRange(hideSheet, chosenDate, 5);
   let monthRowInd = rangeArr[0],
   monthEndRow = rangeArr[1];
 
   //find cols with expense type names & reimb mark
-  let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrRes.getValue(), "spec") + 2; //expense type param ignored
+  let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResReimb.getValue(), "spec") + 2; //expense type param ignored
   let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColSpec + 3,
 
@@ -625,7 +625,7 @@ function checkReimb(year, month, nonReimbCell, checkOrRes, specSheet, hideSheet)
 //----------spec sheet mods----------//
 
 
-function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardType, expenseNoteType, newExpenseNoteType, expenseType, specSheet, hideSheet) {
+function subModSpecSheet(date, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
@@ -637,7 +637,7 @@ function subModSpecSheet(checkOrRes, needOrWantOrReimb, date, amountOut, cardTyp
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES col finding
-  if (checkOrRes.getValue() == "RES") {
+  if (checkOrResOut.getValue() == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
       ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
     }
