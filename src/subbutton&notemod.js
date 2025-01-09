@@ -684,6 +684,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
     specSheet.getRange(targetRow, ccolWithBrokeDownCost).setValue(amountOut.getValue()); //set cost
     specSheet.getRange(targetRow, ccolWithExpTotCost).setValue(amountOut.getValue()); //set total cost the same as cost
     specSheet.getRange(targetRow, ccolWithExpTypeNames).setValue(expenseType.getValue()); //set exp type
+    specSheet.getRange(targetRow, ccolWithCardType).setValue(creditType.getValue()); //set credit type
     if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
   }
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
@@ -694,49 +695,11 @@ function subModSpecSheet(date, specSheet, hideSheet) {
     totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost);
 
     brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOut.getValue()); //add onto existing formula
-    totCostCell.setValue(totCostCell.getValue() + "+" + amountOut.getValue()); //add onto existing total cost
+    totCostCell.setValue(totCostCell.getValue() + amountOut.getValue()); //add onto existing total cost
   }
 
   specSheet.getRange(targetRow, ccolWithDate).setValue(date); //set date (force updates existing entry to recently modified date)
 
-  //no formula exists (1 cost)
-  if (tempCostEntry[1] == null) {
-    specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempFormulaEntry)
-  }
-  else {
-    //a formula exists
-    specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempCostEntry[1])
-  }
-  specSheet.getRange(sheetInd, ccolWithExpTypeNames).setValue(expenseType.getValue());
-
-  //card conditions
-  if (tempCardEntry != null) {
-    switch (tempCardEntry[0]) {
-      case "@D":
-        tempCardEntry = "DISCOVER";
-        break;
-      case "@B":
-        tempCardEntry = "BILT";
-        break;
-      case "@C":
-        tempCardEntry = "CHASE FU";
-        break;
-      case "@A":
-        tempCardEntry = "CHASE AP";
-        break;
-      case "@C1":
-        tempCardEntry = "CAPONE SAVOR";
-        break;
-      default:
-        tempCardEntry = "N/A";
-        break;
-    }
-  }
-  else tempCardEntry = "N/A"
-
-  specSheet.getRange(sheetInd, ccolWithCardType).setValue(tempCardEntry);
-  noteInd++;
-  sheetInd++;
   return;
 }
 
