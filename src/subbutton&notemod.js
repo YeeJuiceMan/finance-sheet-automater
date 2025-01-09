@@ -629,15 +629,19 @@ function subModSpecSheet(date, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
+  checkOrResVal = checkOrResOut.getValue(),
   expenseTypeVal = expenseType.getValue(),
+  amountOutVal = amountOut.getValue(),
   needOrWantOrReimbVal = needOrWantOrReimb.getValue(),
-  expenseNoteTypeVal = expenseNoteType.getValue();
+  expenseNoteTypeVal = expenseNoteType.getValue(),
+  newExpenseNoteTypeVal = newExpenseNoteType.getValue(),
+  creditTypeVal = creditType.getValue();
 
   //for readability
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES col finding
-  if (checkOrResOut.getValue() == "RES") {
+  if (checkOrResVal == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
       ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
     }
@@ -673,31 +677,36 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   }
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
 
-  let reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark); //reimb cell as it is used in multiple conditions
-  let creditCell = specSheet.getRange(targetRow, ccolWithCardType);
+  //cell vars for readability
+  let brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
+  totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost),
+  expTypeCell = specSheet.getRange(targetRow, ccolWithExpTypeNames),
+  creditCell = specSheet.getRange(targetRow, ccolWithCardType),
+  reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark);
 
   //note entry dne or the entry exists but is already reimbed
   if (expenseNoteTypeVal == "N/A" ||
         (expenseNoteTypeVal != "N/A" &&
           (needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) ||
-          (creditCell.getValue() != creditType.getValue())
+          (creditCell.getValue() != creditTypeVal)
         )
      ) {
-    specSheet.getRange(targetRow, ccolWithBrokeDownCost).setValue(amountOut.getValue()); //set cost
-    specSheet.getRange(targetRow, ccolWithExpTotCost).setValue(amountOut.getValue()); //set total cost the same as cost
-    specSheet.getRange(targetRow, ccolWithExpTypeNames).setValue(expenseType.getValue()); //set exp type
-    specSheet.getRange(targetRow, ccolWithCardType).setValue(creditType.getValue()); //set credit type
+    brokeDownCostCell.setValue(amountOutVal); //set cost
+    totCostCell.setValue(amountOutVal); //set total cost the same as cost
+    expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type
+    creditCell.setValue(creditTypeVal); //set credit type
     if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
   }
   else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     targetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(targetRow, ccolWithExpTypeNames).getValue() && targetRow <= lastRow) targetRow++; //iterate to find the right row with the same exp type
 
-    let brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
+    //re-find the range with the new target row
+    brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
     totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost);
 
-    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOut.getValue()); //add onto existing formula
-    totCostCell.setValue(totCostCell.getValue() + amountOut.getValue()); //add onto existing total cost
+    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
+    totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
   }
 
   specSheet.getRange(targetRow, ccolWithDate).setValue(date); //set date (force updates existing entry to recently modified date)
