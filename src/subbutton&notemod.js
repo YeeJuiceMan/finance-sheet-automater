@@ -110,7 +110,7 @@ function onEdit(e) {
   }
   catch (error) {
     //Log the error to all error msg cells
-    SpreadsheetApp.getUi().alert(error);
+    SpreadsheetApp.getUi().alert("Error: " + error.message + "\n\n" + error.stack);
 
     //Reset all buttons
     redOutButton.setValue(false);
