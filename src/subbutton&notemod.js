@@ -1045,6 +1045,8 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
     //vars for readability
     let activeCellRange, //in the off chance the button is a merged button
     individualButtonCol = null, //in the off chance the button is a merged button
+    activeCellRangeLastRow, //in the off chance the button is a merged button
+    activeCellRangeRow,  //in the off chance the button is a merged button
     buttonRow,
     lastRowOrCol,
     prevLastRowOrCol,
@@ -1052,8 +1054,11 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
 
     if (activeCell.isPartOfMerge()) { //if the button is part of a merged range, get the range & set rows accordingly
       activeCellRange = activeCell.getMergedRanges()[0]; //get the range of the clicked merged cell from the returned array
-      lastRowOrCol = hideSheet.getRange(activeCellRange.getLastRow(), endRowOrColListCol).getValue(); //get the last row or col of the months or categories
-      prevLastRowOrCol = hideSheet.getRange(activeCellRange.getRow() - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev months or categories and add by 1
+      activeCellRangeRow = activeCellRange.getRow(); //get the row of the merged
+      activeCellRangeLastRow = activeCellRange.getLastRow(); //get the last row of the merged range
+
+      lastRowOrCol = hideSheet.getRange(activeCellRangeLastRow, endRowOrColListCol).getValue(); //get the last row or col of the months or categories
+      prevLastRowOrCol = hideSheet.getRange(activeCellRangeRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev months or categories and add by 1
       individualButtonCol = endRowOrColListCol - 2;
     }
     else {
@@ -1080,7 +1085,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
     }
 
     if (individualButtonCol != null) { //if the button is part of a merged range, set the value of the individual button as the merged range value
-      hideSheet.getRange(activeCellRange.getRow(), individualButtonCol).setValue(activeVal);
+      hideSheet.getRange(activeCellRangeRow, individualButtonCol, activeCellRangeLastRow - activeCellRangeRow + 1).setValue(activeVal);
     }
 }
 
