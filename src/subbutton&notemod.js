@@ -894,7 +894,8 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
     }
     else if (individualButtonCol == null && activeVal == false) { //if the button is not part of a merged range, set the value of the merged range as the individual button value if false
       errorMsgHide.setValue("Setting merged button values to " + activeVal + "...");
-      hideSheet.getRange(buttonRow, activeCell.getColumn() + 1).setValue(activeVal);
+      mergedButtonCell = hideSheet.getRange(buttonRow, activeCell.getColumn() + 1).getMergedRanges()[0];
+      mergedButtonCell.setValue(activeVal);
     }
     errorMsgHide.setValue("Done.");
     errorMsgHide.setBackground("#93c47d");
