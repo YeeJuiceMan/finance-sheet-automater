@@ -109,8 +109,16 @@ function onEdit(e) {
     onButtonTrigger(e);
   }
   catch (error) {
-    //Log the error to all error msg cells
+    //Log the error to alert
     SpreadsheetApp.getUi().alert("There was an exception. The stack trace is as follows:\n\n" + error.stack);
+
+    //Make all msg cells display as exception
+    errorMsgOut.setValue("Exception happened.");
+    errorMsgIn.setValue("Exception happened.");
+    errorMsgReimb.setValue("Exception happened.");
+    errorMsgOut.setBackground("#e06666");
+    errorMsgIn.setBackground("#e06666");
+    errorMsgReimb.setBackground("#e06666");
 
     //Reset all buttons
     redOutButton.setValue(false);
