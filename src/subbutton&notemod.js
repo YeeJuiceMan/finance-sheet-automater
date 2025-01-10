@@ -917,7 +917,7 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
       errorMsgHide.setValue("Setting individual button values to " + activeVal + "...");
       hideSheet.getRange(activeCellRangeRow, individualButtonCol, activeCellRangeLastRow - activeCellRangeRow + 1).setValue(activeVal);
     }
-    else if (individualButtonCol == null && !activeVal) { //if the button is not part of a merged range, set the value of the merged range as the individual button value if false
+    else if (individualButtonCol == null && activeVal == false) { //if the button is not part of a merged range, set the value of the merged range as the individual button value if false
       errorMsgHide.setValue("Setting merged button values to " + activeVal + "...");
       hideSheet.getRange(buttonRow, activeCell.getColumn() + 1).setValue(activeVal);
     }
