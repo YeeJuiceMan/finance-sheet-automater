@@ -320,12 +320,21 @@ function onEdit(e) {
     onButtonTrigger(e);
   }
   catch (error) {
+    //Log the error to all error msg cells
     errorMsgOut.setValue("Error: " + error);
-    errorMsgOut.setBackground("#e06666");
     errorMsgIn.setValue("Error: " + error);
-    errorMsgIn.setBackground("#e06666");
     errorMsgReimb.setValue("Error: " + error);
+    errorMsgOut.setBackground("#e06666");
+    errorMsgIn.setBackground("#e06666");
     errorMsgReimb.setBackground("#e06666");
+
+    //Reset all buttons
+    consoleSheet.getRange("B20").setValue(false);
+    consoleSheet.getRange("C20").setValue(false);
+    consoleSheet.getRange("E18").setValue(false);
+    consoleSheet.getRange("F18").setValue(false);
+    consoleSheet.getRange("H14").setValue(false);
+    consoleSheet.getRange("I14").setValue(false);
   }
 }
 
