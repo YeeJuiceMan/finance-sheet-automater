@@ -873,8 +873,8 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
     activeCellRangeLastRow, //in the off chance the button is a merged button
     activeCellRangeRow,  //in the off chance the button is a merged button
     buttonRow,
-    lastRowOrCol,
-    prevLastRowOrCol,
+    lastRowOrColForMonthOrCategory,
+    firstRowOrColForMonthOrCategory,
     rowOrColRange;
 
     if (activeCell.isPartOfMerge()) { //if the button is part of a merged range, get the range & set rows accordingly
@@ -883,39 +883,43 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
       activeCellRangeRow = activeCellRange.getRow(); //get the row of the merged
       activeCellRangeLastRow = activeCellRange.getLastRow(); //get the last row of the merged range
 
-      lastRowOrCol = hideSheet.getRange(activeCellRangeLastRow, endRowOrColListCol).getValue(); //get the last row or col of the months or categories
-      prevLastRowOrCol = hideSheet.getRange(activeCellRangeRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev months or categories and add by 1
+      lastRowOrColForMonthOrCategory = hideSheet.getRange(activeCellRangeLastRow, endRowOrColListCol).getValue(); //get the last row or col of the months or categories
+      firstRowOrColForMonthOrCategory = hideSheet.getRange(activeCellRangeRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev months or categories and add by 1
       individualButtonCol = endRowOrColListCol - 2;
     }
     else {
       errorMsgHide.setValue("Single hide/show clicked;\nFinding range...");
       buttonRow = activeCell.getRow(); //get the row of the button clicked
-      lastRowOrCol = hideSheet.getRange(buttonRow, endRowOrColListCol).getValue(); //get the last row or col of the month or category
-      prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev month or category and add by 1
+      lastRowOrColForMonthOrCategory = hideSheet.getRange(buttonRow, endRowOrColListCol).getValue(); //get the last row or col of the month or category
+      firstRowOrColForMonthOrCategory = hideSheet.getRange(buttonRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev month or category and add by 1
     }
 
-    rowOrColRange = lastRowOrCol - prevLastRowOrCol + 1; //get the range/number of rows or cols to hide
+    rowOrColRange = lastRowOrColForMonthOrCategory - firstRowOrColForMonthOrCategory + 1; //get the range/number of rows or cols to hide
 
     if (activeVal == true) {
       errorMsgHide.setValue("Hiding...");
       if (rowOrCol == "row") {
-        targetSpecSheet.hideRows(prevLastRowOrCol, rowOrColRange);
+        targetSpecSheet.hideRows(firstRowOrColForMonthOrCategory, rowOrColRange);
       }
       else if (rowOrCol == "col")
-        targetSpecSheet.hideColumns(prevLastRowOrCol, rowOrColRange);
+        targetSpecSheet.hideColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
     }
     else if (activeVal == false) {
       errorMsgHide.setValue("Showing...");
       if (rowOrCol == "row")
-        targetSpecSheet.showRows(prevLastRowOrCol, rowOrColRange);
+        targetSpecSheet.showRows(firstRowOrColForMonthOrCategory, rowOrColRange);
       else if (rowOrCol == "col") {
-        targetSpecSheet.showColumns(prevLastRowOrCol, rowOrColRange);
+        targetSpecSheet.showColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
       }
     }
 
     if (individualButtonCol != null) { //if the button is part of a merged range, set the value of the individual button as the merged range value
       errorMsgHide.setValue("Setting individual button values to " + activeVal + "...");
       hideSheet.getRange(activeCellRangeRow, individualButtonCol, activeCellRangeLastRow - activeCellRangeRow + 1).setValue(activeVal);
+    }
+    else if (individualButtonCol == null && !activeVal) { //if the button is not part of a merged range, set the value of the merged range as the individual button value if false
+      errorMsgHide.setValue("Setting merged button values to " + activeVal + "...");
+      hideSheet.getRange(buttonRow, activeCell.getColumn() + 1).setValue(activeVal);
     }
     errorMsgHide.setValue("Done.");
     errorMsgHide.setBackground("#93c47d");
