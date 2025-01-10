@@ -469,6 +469,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES col finding
+  errorMsgOut.setValue("Finding columns...");
   if (checkOrResOutVal == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
       ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
@@ -492,6 +493,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   ccolWithReimbMark = ccolWithDate + 5; //may or may not be used
 
   //finding range of month in spec sheet to find target row
+  errorMsgOut.setValue("Finding month range...");
   let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
@@ -499,6 +501,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  errorMsgOut.setValue("Finding target row...");
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, 5, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
@@ -517,6 +520,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
   //note entry dne
   if (expenseNoteTypeVal == "N/A") {
+    errorMsgOut.setValue("Note is N/A.\nAdding new entry...");
     dateCell.setValue(date); //set date
     brokeDownCostCell.setValue(amountOutVal); //set cost
     totCostCell.setValue(amountOutVal); //set total cost the same as cost
@@ -525,6 +529,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
     expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new
   }
   else { //possible existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
+    errorMsgOut.setValue("Note is not N/A.\nFinding existing entry...");
     let newTargetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithExpTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
 
@@ -534,6 +539,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
     //extra conditions if the reimb or the credit type differs from what's entered; add to original target row as new entry
     if ((needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) || (creditCell.getValue() != outCreditTypeVal)) {
+      errorMsgOut.setValue("Reimb and/or credit does not match.\nAdding new entry...");
       //reset to prev target row
       creditCell = specSheet.getRange(targetRow, ccolWithCardType),
       reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark);
@@ -547,6 +553,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
     }
     else { //exact same entry with a new cost
       //update remaining cells to new target row
+      errorMsgOut.setValue("Reimb and credit match.\nUpdating existing entry...");
       dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
       brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
       totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
