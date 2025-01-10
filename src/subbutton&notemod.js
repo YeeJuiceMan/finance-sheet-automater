@@ -486,7 +486,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
-  errorMsgOut.setValue("Finding target row..." + startRow + " " + lastRow + " " + ccolWithBrokeDownCost);
+  errorMsgOut.setValue("Finding target row...");
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, monthEndRowListCol, checkReimbOutColSpec + 5, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
@@ -910,6 +910,7 @@ function monthRowFinder(start, end, today) {
 //finds first blank row in a given range of rows
 function findFirstBlankRow(sheet, startRow, endRow, col) {
   while (startRow <= endRow) {
+    Logger.log(startRow + " " + endRow);
     let mid = Math.floor((startRow + endRow) / 2);
     if (sheet.getRange(mid, col).isBlank()) {
       if (sheet.getRange(mid - 1, col).isBlank()) endRow = mid - 1; //if the row before is blank, set new end row
