@@ -140,14 +140,16 @@ function onButtonTrigger(e) {
   activeSheetName = e.source.getActiveSheet().getName();
 
   //for spec hide menu
-  if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
-    if (activeSheetName == usSpecSheetHideMenu.getName()) {
-      entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+  if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
+    if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
+      if (activeSheetName == usSpecSheetHideMenu.getName()) {
+        entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+      }
     }
-  }
-  else if (reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter){ //hide category(s) buttons
-    if (activeSheetName == usSpecSheetHideMenu.getName()) {
-      entryHiding(activeCell, activeVal, usCategoryEndColListCol, "col", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+    else if (reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter){ //hide category(s) buttons
+      if (activeSheetName == usSpecSheetHideMenu.getName()) {
+        entryHiding(activeCell, activeVal, usCategoryEndColListCol, "col", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+      }
     }
   }
 
