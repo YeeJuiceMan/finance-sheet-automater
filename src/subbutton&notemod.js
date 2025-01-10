@@ -550,9 +550,9 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
 
   //vars for dropdown
   errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, today, -1);
   let addRowSpec = rangeArr[0],
-  addRowSpecLen = -1;
+  addRowSpecLen = rangeArr[2];
   errorMsgOut.setValue("Updating dropdown list...");
   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
