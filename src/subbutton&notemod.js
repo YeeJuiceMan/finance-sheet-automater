@@ -913,7 +913,7 @@ function findFirstBlankRow(sheet, startRow, endRow, col) {
     Logger.log(startRow + " " + endRow);
     let mid = Math.floor((startRow + endRow) / 2);
     if (sheet.getRange(mid, col).isBlank()) {
-      if (mid - 1 >= endRow && sheet.getRange(mid - 1, col).isBlank()) endRow = mid - 1; //if the row before is blank & is within range, set new end row
+      if (mid - 1 >= startRow && sheet.getRange(mid - 1, col).isBlank()) endRow = mid - 1; //if the row before is blank & is within range, set new end row
       else return mid; //first blank row found
     }
     else startRow = mid + 1; //if not blank, set new start row
