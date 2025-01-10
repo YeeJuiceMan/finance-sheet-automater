@@ -304,7 +304,8 @@ nonReimbCell = consoleSheet.getRange("I11:I12"),
 
 //extras
 usMonthEndRowListCol = 6,
-usCategoryEndColListCol = 12;
+usCategoryEndColListCol = 12,
+twMonthEndRowListCol = 6;
 
 
 function onEdit(e) {
@@ -362,9 +363,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          subButtonAct(usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
+          subButtonAct(usDayVal, usMonthEndRowListCol, usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { //will be changed later
-          subButtonAct(twDayVal, twSheet, twSpecSheet, twSpecSheetHideMenu);
+          subButtonAct(twDayVal, twMonthEndRowListCol, twSheet, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgOut.setValue("Successfully added " + typeSheetOut.getValue() + " $" + amountOut.getValue() + ". Please input notes & press Green to continue.");
@@ -386,9 +387,9 @@ function onButtonTrigger(e) {
 
         if (typeSheetOut.getValue() == "US") {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
-          subModSpecSheet(new Date(), usSpecSheet, usSpecSheetHideMenu);
+          subModSpecSheet(new Date(), usMonthEndRowListCol, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
-          subModSpecSheet(new Date(), twSpecSheet, twSpecSheetHideMenu);
+          subModSpecSheet(new Date(), twMonthEndRowListCol, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgOut.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
@@ -409,9 +410,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetIn.getValue() == "US") {
-          addButtonAct(usSheet, usSpecSheet, usSpecSheetHideMenu);
+          addButtonAct(usMonthEndRowListCol, usSheet, usSpecSheet, usSpecSheetHideMenu);
         } else if (typeSheetIn.getValue() == "TW") {
-          addButtonAct(twSheet, twSpecSheet, twSpecSheetHideMenu);
+          addButtonAct(twMonthEndRowListCol, twSheet, twSpecSheet, twSpecSheetHideMenu);
         }
 
         errorMsgIn.setValue("Successfully added " + typeSheetIn.getValue() + " $" + amountIn.getValue() + ". Please input notes & press Green to continue.");
@@ -449,9 +450,9 @@ function onButtonTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(usSpecSheet, usSpecSheetHideMenu)
+          needReimb = checkReimb(usMonthEndRowListCol, usSpecSheet, usSpecSheetHideMenu)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(twSpecSheet, twSpecSheetHideMenu)
+          needReimb = checkReimb(twMonthEndRowListCol, twSpecSheet, twSpecSheetHideMenu)
         }
 
         if (needReimb == true) {
@@ -490,7 +491,7 @@ function onButtonTrigger(e) {
 //----------button action----------//
 
 //adds out val to chosen cell given parameters
-function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
+function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideSheet) {
 
   errorMsgOut.setValue("Finding rows...");
 
@@ -540,7 +541,7 @@ function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
 
   //vars for dropdown
   errorMsgOut.setValue("Updating dropdown list...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
+  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
@@ -555,7 +556,7 @@ function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
 }
 
 //adds in val to chosen cell given parameters
-function addButtonAct(typeSheet, specSheet, hideSheet){
+function addButtonAct(monthEndRowListCol, typeSheet, specSheet, hideSheet){
 
   errorMsgIn.setValue("Finding rows...");
 
@@ -585,7 +586,7 @@ function addButtonAct(typeSheet, specSheet, hideSheet){
 
   //vars for dropdown
   errorMsgIn.setValue("Updating dropdown list...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
+  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
@@ -601,12 +602,12 @@ function addButtonAct(typeSheet, specSheet, hideSheet){
 
 
 //checks reimb of specified year & date to see what isn't reimbed yet
-function checkReimb(specSheet, hideSheet) {
+function checkReimb(monthEndRowListCol, specSheet, hideSheet) {
 
   //month range
   errorMsgReimb.setValue("Finding month range...");
   let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
-  let rangeArr = findSpecMonthRange(hideSheet, chosenDate, 5);
+  let rangeArr = findSpecMonthRange(hideSheet, chosenDate, monthEndRowListCol);
   let monthRowInd = rangeArr[0],
   monthEndRow = rangeArr[1];
 
@@ -641,7 +642,7 @@ function checkReimb(specSheet, hideSheet) {
 //----------spec sheet mods----------//
 
 //modifies the spec sheet for deductions in the spec sheet
-function subModSpecSheet(date, specSheet, hideSheet) {
+function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
@@ -680,7 +681,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   ccolWithReimbMark = ccolWithDate + 5; //may or may not be used
 
   //finding range of month in spec sheet to find target row
-  let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
   totalMonthLen = rangeArr[2],
@@ -755,7 +756,7 @@ function subModSpecSheet(date, specSheet, hideSheet) {
 
 
 //modifies the spec sheet for additions in the spec sheet
-function addModSpecSheet(date, specSheet, hideSheet) {
+function addModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
@@ -768,12 +769,12 @@ function addModSpecSheet(date, specSheet, hideSheet) {
 
   //CHECK
   if (checkOrResInVal == "CHECK") {
-    ccolWithDate = findAddCol(typeSheet, null, "IN", "CHECK", "spec");
+    ccolWithDate = findAddCol(specSheet, null, "IN", "CHECK", "spec");
   }
 
   //RES
   else {
-    ccolWithDate = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec");
+    ccolWithDate = findAddCol(specSheet, null, fixedOrNotVal, "RES", "spec");
   }
 
   //other cols relative to found one (reimb is exception)
@@ -783,7 +784,7 @@ function addModSpecSheet(date, specSheet, hideSheet) {
   ccolWithCardType = ccolWithDate + 4;
 
   //finding range of month in spec sheet to find target row
-  let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
   totalMonthLen = rangeArr[2],
