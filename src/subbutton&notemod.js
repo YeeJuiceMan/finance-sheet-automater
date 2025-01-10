@@ -540,10 +540,11 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
   addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
 
   //vars for dropdown
-  errorMsgOut.setValue("Updating dropdown list...");
+  errorMsgOut.setValue("Finding spec sheet month range...");
   let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
+  errorMsgOut.setValue("Updating dropdown list...");
   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
@@ -585,10 +586,11 @@ function addButtonAct(monthEndRowListCol, typeSheet, specSheet, hideSheet){
   addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
 
   //vars for dropdown
-  errorMsgIn.setValue("Updating dropdown list...");
+  errorMsgIn.setValue("Finding spec sheet month range...");
   let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
+  errorMsgIn.setValue("Updating dropdown list...");
   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
@@ -630,6 +632,7 @@ function checkReimb(monthEndRowListCol, specSheet, hideSheet) {
   }
 
   //revalidate nonReimbCell & nonReimbCostCell dropdown list
+  errorMsgReimb.setValue("Updating dropdown list...");
   nonReimbCell.setValue("N/A");
   nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
 
