@@ -141,16 +141,10 @@ function onButtonTrigger(e) {
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
-    if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
-      if (activeSheetName == usSpecSheetHideMenu.getName()) {
+    if ((reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter) && activeSheetName == usSpecSheetHideMenu.getName()) //hide month(s) buttons
         entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
-      }
-    }
-    else if (reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter){ //hide category(s) buttons
-      if (activeSheetName == usSpecSheetHideMenu.getName()) {
+    else if ((reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter) && activeSheetName == usSpecSheetHideMenu.getName()) //hide category(s) buttons
         entryHiding(activeCell, activeVal, usCategoryEndColListCol, "col", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
-      }
-    }
   }
 
   //console buttons
