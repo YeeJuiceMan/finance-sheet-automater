@@ -492,6 +492,8 @@ function onButtonTrigger(e) {
 //adds out val to chosen cell given parameters
 function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
 
+  errorMsgOut.setValue("Finding rows...");
+
   let today = new Date();
   let addRow = findAddRow(typeSheet, today),
   addCol,
@@ -499,6 +501,8 @@ function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
   expenseTypeVal = expenseType.getValue(),
   needOrWantOrReimbVal = needOrWantOrReimb.getValue();
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
+
+  errorMsgOut.setValue("Finding columns...");
 
   //RES
   if (checkOrResOut.getValue() == "RES") {
@@ -530,9 +534,12 @@ function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
     var curDailyVal = dayVal.getValue();
     if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amountOut.getValue());
   }
+
+  errorMsgOut.setValue("Adding amount...");
   addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
 
   //vars for dropdown
+  errorMsgOut.setValue("Updating dropdown list...");
   let rangeArr = findSpecMonthRange(hideSheet, today, 5);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
@@ -550,12 +557,15 @@ function subButtonAct(dayVal, typeSheet, specSheet, hideSheet) {
 //adds in val to chosen cell given parameters
 function addButtonAct(typeSheet, specSheet, hideSheet){
 
+  errorMsgIn.setValue("Finding rows...");
+
   let today = new Date();
   let addRow = findAddRow(typeSheet, today),
   addCol,
   addColSpec, //for dropdown list
   fixedOrNotVal = fixedOrNot.getValue();
 
+  errorMsgIn.setValue("Finding columns...");
   //CHECK
   if (checkOrResIn.getValue() == "CHECK") {
     addCol = findAddCol(typeSheet, null, "IN", "CHECK", "type");
@@ -570,9 +580,11 @@ function addButtonAct(typeSheet, specSheet, hideSheet){
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
+  errorMsgIn.setValue("Adding amount...");
   addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
 
   //vars for dropdown
+  errorMsgIn.setValue("Updating dropdown list...");
   let rangeArr = findSpecMonthRange(hideSheet, today, 5);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
@@ -592,12 +604,14 @@ function addButtonAct(typeSheet, specSheet, hideSheet){
 function checkReimb(specSheet, hideSheet) {
 
   //month range
+  errorMsgReimb.setValue("Finding month range...");
   let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
   let rangeArr = findSpecMonthRange(hideSheet, chosenDate, 5);
   let monthRowInd = rangeArr[0],
   monthEndRow = rangeArr[1];
 
   //find cols with expense type names & reimb mark
+  errorMsgReimb.setValue("Finding columns...");
   let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResReimb.getValue(), "spec") + 2; //expense type param ignored
   let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColSpec + 3,
@@ -606,6 +620,7 @@ function checkReimb(specSheet, hideSheet) {
   nonReimbArray = ["N/A"];
 
   //adds into array where only non-reimbed items exist w/ their respective costs
+  errorMsgReimb.setValue("Finding non-reimb items...");
   while (monthRowInd <= monthEndRow) {
     if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank()) {
       nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
