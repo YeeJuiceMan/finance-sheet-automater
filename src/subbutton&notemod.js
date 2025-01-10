@@ -280,7 +280,7 @@ expenseType = consoleSheet.getRange("C9:C10"),
 amountOut = consoleSheet.getRange("C11:C12"),
 expenseNoteType = consoleSheet.getRange("C13:C14"),
 newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-creditType = consoleSheet.getRange("C17:C18"),
+outCreditType = consoleSheet.getRange("C17:C18"),
 usDayVal = consoleSheet.getRange("C22"),
 twDayVal = consoleSheet.getRange("C24"),
 
@@ -292,6 +292,7 @@ fixedOrNot = consoleSheet.getRange("F7:F8"),
 amountIn = consoleSheet.getRange("F9:F10"),
 incomeNoteType = consoleSheet.getRange("F11:F12"),
 newIncomeNoteType = consoleSheet.getRange("F13:F14"),
+inCreditType = consoleSheet.getRange("F15:F16"),
 
 //reimb var
 typeSheetReimb = consoleSheet.getRange("H2:I3"),
@@ -302,7 +303,8 @@ checkOrResReimb = consoleSheet.getRange("I9:I10"),
 nonReimbCell = consoleSheet.getRange("I11:I12"),
 
 //extras
-usMonthEndRowListCol = 5;
+usMonthEndRowListCol = 6,
+usCategoryEndColListCol = 12;
 
 
 function onEdit(e) {
@@ -328,19 +330,19 @@ function onButtonTrigger(e) {
   //for spec hide menu
   if (refArr[0] == "D"){ //hide month buttons
     if (activeSheetName == usSpecSheetHideMenu.getName())
-      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 5, "row");
+      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usMonthEndRowListCol, "row");
   }
-  else if (refArr[0] == "I"){ //hide category buttons
+  else if (refArr[0] == "J"){ //hide category buttons
     if (e.source.getActiveSheet() == usSpecSheetHideMenu.getName())
-      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, 10, "col");
+      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usCategoryEndColListCol, "col");
   }
 
   /*
   B20 = BUTTON RED (OUT)
   C20 = BUTTON GREEN (OUT)
 
-  E16 = BUTTON RED (IN)
-  F16 = BUTTON GREEN (IN)
+  E18 = BUTTON RED (IN)
+  F18 = BUTTON GREEN (IN)
 
   H14 = BUTTON RED (REIMB)
   I14 = BUTTON GREEN (REIMB)
@@ -395,7 +397,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "E16": //red in
+      case "E18": //red in
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
 
@@ -418,7 +420,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "F16": //green in
+      case "F18": //green in
         activeCell.setValue(false);
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
@@ -624,24 +626,24 @@ function checkReimb(specSheet, hideSheet) {
 
 //----------spec sheet mods----------//
 
-
+//modifies the spec sheet for deductions in the spec sheet
 function subModSpecSheet(date, specSheet, hideSheet) {
 
   //find add col in spec w/ some init vars
   let ccolWithDate,
-  checkOrResVal = checkOrResOut.getValue(),
+  checkOrResOutVal = checkOrResOut.getValue(),
   expenseTypeVal = expenseType.getValue(),
   amountOutVal = amountOut.getValue(),
   needOrWantOrReimbVal = needOrWantOrReimb.getValue(),
   expenseNoteTypeVal = expenseNoteType.getValue(),
   newExpenseNoteTypeVal = newExpenseNoteType.getValue(),
-  creditTypeVal = creditType.getValue();
+  outCreditTypeVal = outCreditType.getValue();
 
   //for readability
   if (needOrWantOrReimbVal == "REIMB") needOrWantOrReimbVal = "REIMB OUT";
 
   //RES col finding
-  if (checkOrResVal == "RES") {
+  if (checkOrResOutVal == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
       ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
     }
@@ -689,14 +691,14 @@ function subModSpecSheet(date, specSheet, hideSheet) {
 
   //note entry dne
   if (expenseNoteTypeVal == "N/A") {
+    dateCell.setValue(date); //set date
     brokeDownCostCell.setValue(amountOutVal); //set cost
     totCostCell.setValue(amountOutVal); //set total cost the same as cost
-    creditCell.setValue(creditTypeVal); //set credit type
+    creditCell.setValue(outCreditTypeVal); //set credit type
     if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
     expTypeCell.setValue(newExpenseNoteTypeVal); //set exp type as new
-    dateCell.setValue(date); //set date
   }
-  else { //existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
+  else { //possible existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     let newTargetRow = startRow;
     while (expenseNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithExpTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
 
@@ -705,28 +707,27 @@ function subModSpecSheet(date, specSheet, hideSheet) {
     reimbCell = specSheet.getRange(newTargetRow, ccolWithReimbMark);
 
     //extra conditions if the reimb or the credit type differs from what's entered; add to original target row as new entry
-    if ((needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) || (creditCell.getValue() != creditTypeVal)) {
+    if ((needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) || (creditCell.getValue() != outCreditTypeVal)) {
       //reset to prev target row
       creditCell = specSheet.getRange(targetRow, ccolWithCardType),
       reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark);
 
+      dateCell.setValue(date); //set date
       brokeDownCostCell.setValue(amountOutVal); //set cost
       totCostCell.setValue(amountOutVal); //set total cost the same as cost
-      creditCell.setValue(creditTypeVal); //set credit type
+      creditCell.setValue(outCreditTypeVal); //set credit type
       if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
       expTypeCell.setValue(expenseNoteTypeVal); //set exp type as current as it is not N/A
-      dateCell.setValue(date); //set date
     }
     else { //exact same entry with a new cost
       //update remaining cells to new target row
       dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
       brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
-      totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost),
-      expTypeCell = specSheet.getRange(newTargetRow, ccolWithExpTypeNames);
+      totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
 
+      dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
       brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
       totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
-      dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
     }
   }
 
@@ -734,6 +735,102 @@ function subModSpecSheet(date, specSheet, hideSheet) {
   let dropdownArr = specSheet.getRange(startRow, ccolWithExpTypeNames, totalMonthLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
   expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build()); //revalidate expnotetype dropdown list
+
+  return;
+}
+
+
+//modifies the spec sheet for additions in the spec sheet
+function addModSpecSheet(date, specSheet, hideSheet) {
+
+  //find add col in spec w/ some init vars
+  let ccolWithDate,
+  checkOrResInVal = checkOrResIn.getValue(),
+  fixedOrNotVal = fixedOrNot.getValue(),
+  amountInVal = amountIn.getValue(),
+  incomeNoteTypeVal = incomeNoteType.getValue(),
+  newIncomeNoteTypeVal = newIncomeNoteType.getValue(),
+  inCreditTypeVal = inCreditType.getValue();
+
+  //CHECK
+  if (checkOrResInVal == "CHECK") {
+    ccolWithDate = findAddCol(typeSheet, null, "IN", "CHECK", "spec");
+  }
+
+  //RES
+  else {
+    ccolWithDate = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec");
+  }
+
+  //other cols relative to found one (reimb is exception)
+  let ccolWithBrokeDownCost = ccolWithDate + 1,
+  ccolWithExpTotCost = ccolWithDate + 2,
+  ccolWithInTypeNames = ccolWithDate + 3,
+  ccolWithCardType = ccolWithDate + 4;
+
+  //finding range of month in spec sheet to find target row
+  let rangeArr = findSpecMonthRange(hideSheet, date, usMonthEndRowListCol);
+  let startRow = rangeArr[0],
+  lastRow = rangeArr[1],
+  totalMonthLen = rangeArr[2],
+  targetRow; //the row to add entry
+
+  //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
+    addEntryRow(date, 5, 104, specSheet, hideSheet);
+    lastRow++; //will only extend in 1 increments
+    totalMonthLen++;
+    targetRow = lastRow;
+  }
+  else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
+
+  //cell vars for readability
+  let dateCell = specSheet.getRange(targetRow, ccolWithDate),
+  brokeDownCostCell = specSheet.getRange(targetRow, ccolWithBrokeDownCost),
+  totCostCell = specSheet.getRange(targetRow, ccolWithExpTotCost),
+  inTypeCell = specSheet.getRange(targetRow, ccolWithInTypeNames),
+  creditCell = specSheet.getRange(targetRow, ccolWithCardType);
+
+  //note entry dne
+  if (incomeNoteTypeVal == "N/A") {
+    dateCell.setValue(date); //set date
+    brokeDownCostCell.setValue(amountInVal); //set cost
+    totCostCell.setValue(amountInVal); //set total cost the same as cost
+    inTypeCell.setValue(newIncomeNoteTypeVal); //set exp type as new
+    creditCell.setValue(inCreditTypeVal); //set credit type
+  }
+  else { //possible existing expense type
+    let newTargetRow = startRow;
+    while (incomeNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithInTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
+
+    creditCell = specSheet.getRange(newTargetRow, ccolWithCardType); //re-find the range with the new target row for comparisons
+
+    //extra conditions if the credit type differs from what's entered; add to original target row as new entry
+    if (creditCell.getValue() != inCreditTypeVal) {
+
+      creditCell = specSheet.getRange(targetRow, ccolWithCardType); //reset to prev target row
+
+      dateCell.setValue(date); //set date
+      brokeDownCostCell.setValue(amountInVal); //set cost
+      totCostCell.setValue(amountInVal); //set total cost the same as cost
+      inTypeCell.setValue(incomeNoteTypeVal); //set exp type as current as it is not N/A
+      creditCell.setValue(inCreditTypeVal); //set credit type
+    }
+
+    //update remaining cells to new target row
+    dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
+    brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
+    totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
+
+    dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
+    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
+    totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
+  }
+
+
+  let dropdownArr = specSheet.getRange(startRow, ccolWithInTypeNames, totalMonthLen, 1).getValues();
+  dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
+  incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build()); //revalidate innotetype dropdown list
 
   return;
 }
@@ -945,24 +1042,45 @@ function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
 
 //hides certain rows or col entries based on pressed buttons
 function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonColToStartChecking, rowOrCol){
-    let buttonRow = activeCell.getRow();
+    //vars for readability
+    let activeCellRange, //in the off chance the button is a merged button
+    individualButtonCol = null, //in the off chance the button is a merged button
+    buttonRow,
+    lastRowOrCol,
+    prevLastRowOrCol,
+    rowOrColRange;
 
-    let lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue();
-    let prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1;
+    if (activeCell.isPartOfMerge()) { //if the button is part of a merged range, get the range & set rows accordingly
+      activeCellRange = activeCell.getMergedRanges()[0]; //get the range of the clicked merged cell from the returned array
+      lastRowOrCol = hideSheet.getRange(activeCellRange.getLastRow(), buttonColToStartChecking).getValue(); //get the last row or col of the months or categories
+      prevLastRowOrCol = hideSheet.getRange(activeCellRange.getRow() - 1, buttonColToStartChecking).getValue() + 1; //get the row or col of the prev months or categories and add by 1
+      individualButtonCol = buttonColToStartChecking - 1;
+    }
+    else {
+      buttonRow = activeCell.getRow(); //get the row of the button clicked
+      lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue(); //get the last row or col of the month or category
+      prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1; //get the row or col of the prev month or category and add by 1
+    }
+
+    rowOrColRange = lastRowOrCol - prevLastRowOrCol + 1; //get the range/number of rows or cols to hide
 
     if (activeVal == true) {
       if (rowOrCol == "row") {
-        targetSpecSheet.hideRows(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
+        targetSpecSheet.hideRows(prevLastRowOrCol, rowOrColRange);
       }
       else if (rowOrCol == "col")
-        targetSpecSheet.hideColumns(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
+        targetSpecSheet.hideColumns(prevLastRowOrCol, rowOrColRange);
     }
     else if (activeVal == false) {
       if (rowOrCol == "row")
-        targetSpecSheet.showRows(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
+        targetSpecSheet.showRows(prevLastRowOrCol, rowOrColRange);
       else if (rowOrCol == "col") {
-        targetSpecSheet.showColumns(prevLastRowOrCol, lastRowOrCol - prevLastRowOrCol + 1);
+        targetSpecSheet.showColumns(prevLastRowOrCol, rowOrColRange);
       }
+    }
+
+    if (individualButtonCol != null) { //if the button is part of a merged range, set the value of the individual button as the merged range value
+      hideSheet.getRange(activeCellRange.getRow(), individualButtonCol).setValue(activeVal);
     }
 }
 
