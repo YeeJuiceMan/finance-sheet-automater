@@ -110,9 +110,9 @@ function onEdit(e) {
   }
   catch (error) {
     //Log the error to all error msg cells
-    errorMsgOut.setValue("Error: " + error);
-    errorMsgIn.setValue("Error: " + error);
-    errorMsgReimb.setValue("Error: " + error);
+    errorMsgOut.setValue(error);
+    errorMsgIn.setValue(error);
+    errorMsgReimb.setValue(error);
     errorMsgOut.setBackground("#e06666");
     errorMsgIn.setBackground("#e06666");
     errorMsgReimb.setBackground("#e06666");
@@ -503,7 +503,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   errorMsgOut.setValue("Finding target row...");
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
-    addEntryRow(date, 5, 104, specSheet, hideSheet);
+    addEntryRow(date, monthEndRowListCol, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
     totalMonthLen++;
     targetRow = lastRow;
@@ -610,7 +610,7 @@ function addModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
-    addEntryRow(date, 5, 104, specSheet, hideSheet);
+    addEntryRow(date, monthEndRowListCol, 104, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
     totalMonthLen++;
     targetRow = lastRow;
