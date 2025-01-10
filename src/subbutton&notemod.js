@@ -550,7 +550,7 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
 
   //vars for dropdown
   errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, -1);
+  let rangeArr = findSpecMonthRange(yes, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   errorMsgOut.setValue("Updating dropdown list...");
