@@ -304,7 +304,7 @@ nonReimbCell = consoleSheet.getRange("I11:I12"),
 
 //extras
 usMonthEndRowListCol = 6,
-usCategoryEndColListCol = 12;
+usCategoryEndColListCol = 11;
 
 
 function onEdit(e) {
