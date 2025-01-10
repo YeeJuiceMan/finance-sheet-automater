@@ -109,9 +109,6 @@ function onEdit(e) {
     onButtonTrigger(e);
   }
   catch (error) {
-    //Log the error to alert
-    SpreadsheetApp.getUi().alert("There was an exception. The stack trace is as follows:\n\n" + error.stack);
-
     //Make all msg cells display as exception
     errorMsgOut.setValue("Exception happened.");
     errorMsgIn.setValue("Exception happened.");
@@ -127,6 +124,9 @@ function onEdit(e) {
     greenInButton.setValue(false);
     redReimbButton.setValue(false);
     greenReimbButton.setValue(false);
+
+    //Log the error to alert
+    SpreadsheetApp.getUi().alert("There was an exception. The stack trace is as follows:\n\n" + error.stack);
   }
   return; //placeholder to close function
 }
