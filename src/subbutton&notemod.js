@@ -97,7 +97,6 @@ usCategoryButtonColLetter = "J",
 usCategoriesButtonColLetter = "K";
 
 
-
 function onEdit(e) {
   if (!e) {
     throw new Error(
@@ -121,20 +120,20 @@ function onEdit(e) {
     redReimbButton.setValue(false);
     greenReimbButton.setValue(false);
   }
+  return; //placeholder to close function
 }
 
 
 function onButtonTrigger(e) {
   //basic event sheets var
-    const activeCell = e.range,
-    reference = activeCell.getA1Notation(),
-    activeVal = activeCell.getValue(),
-    activeSheetName = e.source.getActiveSheet().getName();
+  const activeCell = e.range,
+  reference = activeCell.getA1Notation(),
+  activeVal = activeCell.getValue(),
+  activeSheetName = e.source.getActiveSheet().getName();
 
   //for spec hide menu
   if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
     if (activeSheetName == usSpecSheetHideMenu.getName()) {
-
       entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
     }
   }
@@ -277,12 +276,11 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      default: //extra button conditions
-        activeCell.setValue(false);
+      default: //extra button conditions (does nothing)
         return;
     }
   }
-  return;
+  return; //placeholder to close function
 }
 
 //----------button action----------//
@@ -319,9 +317,7 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
   //CHECK
   else {
     needOrWantOrReimb.setBackground("#cccccc");
-    if (needOrWantOrReimbVal == "REIMB OUT") {
-      expenseType.setBackground("#999999");
-    }
+    if (needOrWantOrReimbVal == "REIMB OUT") expenseType.setBackground("#999999");
     else expenseType.setBackground("#cccccc");
 
     //find col of targetted cell given N/W/R & exp type
@@ -422,9 +418,8 @@ function checkReimb(monthEndRowListCol, specSheet, hideSheet) {
   //adds into array where only non-reimbed items exist w/ their respective costs
   errorMsgReimb.setValue("Finding non-reimb items...");
   while (monthRowInd <= monthEndRow) {
-    if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank()) {
+    if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank())
       nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
-    }
     monthRowInd++;
   }
 
@@ -460,19 +455,12 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   //RES col finding
   errorMsgOut.setValue("Finding columns...");
   if (checkOrResOutVal == "RES") {
-    if (needOrWantOrReimbVal == "REIMB OUT") {
-      ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
-    }
-    else { //not reimb out
-      ccolWithDate = findAddCol(specSheet, expenseTypeVal, "OUT", "RES", "spec"); //by default settles on date col
-    }
+    if (needOrWantOrReimbVal == "REIMB OUT") ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "RES", "spec"); //by default settles on date col
+    else ccolWithDate = findAddCol(specSheet, expenseTypeVal, "OUT", "RES", "spec"); //not reimb out
   }
 
   //CHECK col finding
-  else {
-    //find col of targeted cell given N/W/R & exp type
-    ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec"); //by default settles on date col
-  }
+  else ccolWithDate = findAddCol(specSheet, expenseTypeVal, needOrWantOrReimbVal, "CHECK", "spec"); //find col of targeted cell given N/W/R & exp type
 
   //other cols relative to found one (reimb is exception)
   let ccolWithBrokeDownCost = ccolWithDate + 1,
@@ -575,14 +563,10 @@ function addModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   inCreditTypeVal = inCreditType.getValue();
 
   //CHECK
-  if (checkOrResInVal == "CHECK") {
-    ccolWithDate = findAddCol(specSheet, null, "IN", "CHECK", "spec");
-  }
+  if (checkOrResInVal == "CHECK") ccolWithDate = findAddCol(specSheet, null, "IN", "CHECK", "spec");
 
   //RES
-  else {
-    ccolWithDate = findAddCol(specSheet, null, fixedOrNotVal, "RES", "spec");
-  }
+  else ccolWithDate = findAddCol(specSheet, null, fixedOrNotVal, "RES", "spec");
 
   //other cols relative to found one (reimb is exception)
   let ccolWithBrokeDownCost = ccolWithDate + 1,
@@ -629,7 +613,6 @@ function addModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 
     //extra conditions if the credit type differs from what's entered; add to original target row as new entry
     if (creditCell.getValue() != inCreditTypeVal) {
-
       creditCell = specSheet.getRange(targetRow, ccolWithCardType); //reset to prev target row
 
       dateCell.setValue(date); //set date
@@ -664,12 +647,8 @@ function addModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
 //Add amount to appropriate cell
 function addMoney(addRow, addCol, amount, typeSheet){
   let curEq = typeSheet.getRange(addRow, addCol).getFormula();
-  if (curEq == "=0") {
-    typeSheet.getRange(addRow, addCol).setFormula(amount);
-  }
-  else {
-    typeSheet.getRange(addRow, addCol).setFormula(curEq + "+" + amount);
-  }
+  if (curEq == "=0") typeSheet.getRange(addRow, addCol).setFormula(amount);
+  else typeSheet.getRange(addRow, addCol).setFormula(curEq + "+" + amount);
 }
 
 
@@ -741,9 +720,7 @@ function findAddRow(sheet, today) {
   let addRow,
   currYear = today.getFullYear();
   if (sheet.getName() == "College Savings 3.0") {
-    if (currYear == 2022) { //2022 is special case (only 4 months)
-      addRow = monthRowFinder(4, 7, today);
-    }
+    if (currYear == 2022) addRow = monthRowFinder(4, 7, today); //2022 is special case (only 4 months)
     else { //finds normally
       let baseYear = 2023;
       let startRow = 8 + ((currYear - baseYear) * 12);
@@ -763,15 +740,11 @@ function findAddRow(sheet, today) {
 function needWantLoop(start, end, sheet, expenseType, typeOrSpec) {
   if (typeOrSpec == "type") {
     for (let i = start; i <= end; i++) {
-      if (sheet.getRange(3, i).getValue() == expenseType) {
-        return i;
-      }
+      if (sheet.getRange(3, i).getValue() == expenseType) return i;
     }
   } else if (typeOrSpec == "spec") {
     for (let i = start; i <= end; i+=5) {
-      if (sheet.getRange(3, i).getValue() == expenseType) {
-        return i;
-      }
+      if (sheet.getRange(3, i).getValue() == expenseType) return i;
     }
   }
   return -1;
@@ -898,19 +871,13 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
 
     if (activeVal == true) {
       errorMsgHide.setValue("Hiding...");
-      if (rowOrCol == "row") {
-        targetSpecSheet.hideRows(firstRowOrColForMonthOrCategory, rowOrColRange);
-      }
-      else if (rowOrCol == "col")
-        targetSpecSheet.hideColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
+      if (rowOrCol == "row") targetSpecSheet.hideRows(firstRowOrColForMonthOrCategory, rowOrColRange);
+      else if (rowOrCol == "col") targetSpecSheet.hideColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
     }
     else if (activeVal == false) {
       errorMsgHide.setValue("Showing...");
-      if (rowOrCol == "row")
-        targetSpecSheet.showRows(firstRowOrColForMonthOrCategory, rowOrColRange);
-      else if (rowOrCol == "col") {
-        targetSpecSheet.showColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
-      }
+      if (rowOrCol == "row") targetSpecSheet.showRows(firstRowOrColForMonthOrCategory, rowOrColRange);
+      else if (rowOrCol == "col") targetSpecSheet.showColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
     }
 
     if (individualButtonCol != null) { //if the button is part of a merged range, set the value of the individual button as the merged range value
@@ -937,14 +904,10 @@ function findFirstBlankRow(sheet, startRow, endRow, col) {
   while (startRow <= endRow) {
     let mid = Math.floor((startRow + endRow) / 2);
     if (sheet.getRange(mid, col).isBlank()) {
-      if (sheet.getRange(mid - 1, col).isBlank()) { //if the row before is blank, set new end row
-        endRow = mid - 1;
-      } else {
-        return mid; //first blank row found
-      }
-    } else {
-      startRow = mid + 1; //if not blank, set new start row
+      if (sheet.getRange(mid - 1, col).isBlank()) endRow = mid - 1; //if the row before is blank, set new end row
+      else return mid; //first blank row found
     }
+    else startRow = mid + 1; //if not blank, set new start row
   }
   return -1; //no blank row found
 }
@@ -1208,51 +1171,8 @@ function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
 //----------extras----------//
 
 
+//for testing purposes
 function test(){
-  //us normal col
-    const resFixedCol = 4,
-    resNonFixedCol = 5,
-    resReimbIn = 6,
-    checkInCol = 7,
-    checkReimbIn = 8,
-    resOutCol = 9,
-    resReimbOut = 10,
-    needTrans = 11,
-    needFood = 12,
-    needGroc = 13,
-    needOn = 14,
-    needItem = 15,
-    needMisc = 16,
-    wantTrans = 17,
-    wantFood = 18,
-    wantGroc = 19,
-    wantOn = 20,
-    wantItem = 21,
-    wantMisc = 22,
-    checkReimbOut = 23;
-
-  //us spec col
-    const resFixedColSpec = 4,
-    resNonFixedColSpec = 9,
-    resReimbInSpec = 14,
-    checkInColSpec = 19,
-    checkReimbInSpec = 24,
-    resOutColSpec = 29,
-    resReimbOutSPec = 34,
-    needTransSpec = 40,
-    needFoodSpec = 45,
-    needGrocSpec = 50,
-    needOnSpec = 55,
-    needItemSpec = 60,
-    needMiscSpec = 65,
-    wantTransSpec = 70,
-    wantFoodSpec = 75,
-    wantGrocSpec = 80,
-    wantOnSpec = 85,
-    wantItemSpec = 90,
-    wantMiscSpec = 95,
-    checkReimbOutSpec = 100;
-
   var mo = 0, yr = 2025;
   var date = new Date(yr, mo);
   var specColNum = 4;
