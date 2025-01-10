@@ -1,225 +1,3 @@
-function test(){
-  //basic sheets var
-    const ss = SpreadsheetApp.getActiveSpreadsheet(),
-    s = SpreadsheetApp.getActiveSheet(),
-    activeCell = ss.getActiveCell(),
-    reference = activeCell.getA1Notation(),
-    activeVal = activeCell.getValue(),
-    refArr = reference.split(''),
-    consoleSheet = ss.getSheetByName("Console"),
-    usSheet = ss.getSheetByName("College Savings 3.0"),
-    twSheet = ss.getSheetByName("College Savings 3.0 (TW)"),
-    usSpecSheet = ss.getSheetByName("College Savings 3.0 Specifics"),
-    usSpecSheetHideMenu = ss.getSheetByName("College Savings 3.0 Specifics Hide Menu"),
-
-  //out var
-    typeSheetOut = consoleSheet.getRange("B2:C3"),
-    errorMsgOut = consoleSheet.getRange("B24"),
-    checkOrResOut = consoleSheet.getRange("C5:C6"),
-    needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
-    expenseType = consoleSheet.getRange("C9:C10"),
-    amountOut = consoleSheet.getRange("C11:C12"),
-    expenseNoteType = consoleSheet.getRange("C13:C14"),
-    newExpenseNoteType = consoleSheet.getRange("C15:C16"),
-    usDayVal = consoleSheet.getRange("C22"),
-    twDayVal = consoleSheet.getRange("C24"),
-
-  //in var
-    typeSheetIn = consoleSheet.getRange("E2:F3"),
-    errorMsgIn = consoleSheet.getRange("E18"),
-    checkOrResIn = consoleSheet.getRange("F5:F6"),
-    fixedOrNot = consoleSheet.getRange("F7:F8"),
-    amountIn = consoleSheet.getRange("F9:F10"),
-    incomeNoteType = consoleSheet.getRange("F11:F12"),
-    newIncomeNoteType = consoleSheet.getRange("F13:F14"),
-
-  //reimb var
-    typeSheetReimb = consoleSheet.getRange("H2:I3"),
-    errorMsgReimb = consoleSheet.getRange("H16"),
-    year = consoleSheet.getRange("I5:I6"),
-    month = consoleSheet.getRange("I7:I8"),
-    nonReimbCell = consoleSheet.getRange("I11:I12"),
-    specRow = consoleSheet.getRange("H4");
-  
-  //us normal col
-    const resFixedCol = 4,
-    resNonFixedCol = 5,
-    resReimbIn = 6,
-    checkInCol = 7,
-    checkReimbIn = 8,
-    resOutCol = 9,
-    resReimbOut = 10,
-    needTrans = 11,
-    needFood = 12,
-    needGroc = 13,
-    needOn = 14,
-    needItem = 15,
-    needMisc = 16,
-    wantTrans = 17,
-    wantFood = 18,
-    wantGroc = 19,
-    wantOn = 20,
-    wantItem = 21,
-    wantMisc = 22,
-    checkReimbOut = 23;
-
-  //us spec col
-    const resFixedColSpec = 4,
-    resNonFixedColSpec = 9,
-    resReimbInSpec = 14,
-    checkInColSpec = 19,
-    checkReimbInSpec = 24,
-    resOutColSpec = 29,
-    resReimbOutSPec = 34,
-    needTransSpec = 40,
-    needFoodSpec = 45,
-    needGrocSpec = 50,
-    needOnSpec = 55,
-    needItemSpec = 60,
-    needMiscSpec = 65,
-    wantTransSpec = 70,
-    wantFoodSpec = 75,
-    wantGrocSpec = 80,
-    wantOnSpec = 85,
-    wantItemSpec = 90,
-    wantMiscSpec = 95,
-    checkReimbOutSpec = 100;
-
-  var mo = 0, yr = 2025;
-  var date = new Date(yr, mo);
-  var specColNum = 4;
-
-  // addEntryRow(today, 5, 76, usSpecSheet, usSpecSheetHideMenu);
-  for (var normColNum = 4; normColNum < 24; normColNum++) {
-    var reimbNo = false;
-
-    if (normColNum == 10|| normColNum == 23) reimbNo = true;
-    customNoteToSheets(date, usSheet, usSpecSheet, usSpecSheetHideMenu, mo + 32, normColNum, reimbNo, 5, specColNum, specColNum + 4);
-    if (specColNum == 34) specColNum += 6;
-    else specColNum += 5;
-  }
-  // subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
-}
-
-
-//Print all notes cost and exp type (given it isn't empty) to spec sheet
-function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCol, reimbOrNot, monthEndRowsListCol, ccolWithBrokeDownCost, ccolWithReimbMark) {
-
-  //other cols relative to first one (reimb is exception)
-  var ccolWithExpTotCost = ccolWithBrokeDownCost + 1;
-  var ccolWithExpTypeNames = ccolWithBrokeDownCost + 2;
-  var ccolWithCardType = ccolWithBrokeDownCost + 3;
-
-  var rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol);
-  var startRow = rangeArr[0];
-  var lastRow = rangeArr[1];
-  var totalMonthLen = rangeArr[2];
-  var monthRow = rangeArr[3];
-
-  //Print all notes cost and exp type (given it isn't empty)
-  var notes = typeSheet.getRange(addRow, addCol).getNotes().toString().split("\n");
-  var noteInd = 0;
-  var sheetInd = startRow;
-
-  //Finding real notes length and checking if it is greater than the max
-  var findNoteLengthInd = 0;
-  var actualNoteLength = 0;
-  while (findNoteLengthInd < notes.length) {
-    if (notes[findNoteLengthInd].length > 0) actualNoteLength++;
-    findNoteLengthInd++;
-  }
-
-  //checks if enough space for note entries; extend if not
-  if (actualNoteLength > totalMonthLen) {
-    while (actualNoteLength > totalMonthLen) {
-      addEntryRow(date, 5, 104, specSheet, hideSheet);
-      lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
-      totalMonthLen = lastRow - startRow + 1;
-      Logger.log("extended w/ month len " + totalMonthLen + " note len " + actualNoteLength);
-    }
-  }
-
-  while (noteInd < notes.length && sheetInd <= lastRow) {
-    Logger.log(notes[noteInd]);
-    if (notes[noteInd].length > 0) { //line isn't empty (handling user typo error)
-      var tempEntry = notes[noteInd].split(": ");
-
-      //split the total cost & equation w/o tilde (if exists)
-
-      var tempCostEntry = tempEntry[0].replace(")", "").replace("~", "").split(" (")
-      Logger.log("total cost " + tempCostEntry);
-      var tempFormulaEntry = tempCostEntry[0].replace(/@([A-Z]+\w*)/, "").trim();
-      Logger.log("formula " + tempFormulaEntry);
-
-      // find credit card info (if exists)
-      var tempCardRegex = new RegExp("@([A-Z]+\w*)");
-      var tempCardEntry = tempCardRegex.exec(tempCostEntry[0]);
-      Logger.log("card " + tempCardEntry);
-
-      //if note in reimb, split the tilde (if it exists)
-      var tildeCheck = tempEntry[0].split(" ")[0];
-      if (reimbOrNot == true) {
-        if (tildeCheck == "~") {
-          //tilde; hence not reimbed
-          specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(false);
-        } 
-        else {
-          //not in reimb column or alr reimbed
-          specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(true);
-        }
-      }
-
-      //put values in respective columns
-      if (tempFormulaEntry != null) specSheet.getRange(sheetInd, ccolWithBrokeDownCost).setValue(tempFormulaEntry);
-
-      //no formula exists (1 cost)
-      if (tempCostEntry[1] == null && tempFormulaEntry != null) {
-        specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempFormulaEntry)
-      }
-      else {
-        //a formula exists
-        specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempCostEntry[1])
-      }
-      specSheet.getRange(sheetInd, ccolWithExpTypeNames).setValue(tempEntry[1]);
-
-      //card conditions
-      if (tempCardEntry != null) {
-        switch (tempCardEntry[0]) {
-          case "@D":
-            tempCardEntry = "DISCOVER";
-            break;
-          case "@B":
-            tempCardEntry = "BILT";
-            break;
-          case "@C":
-            tempCardEntry = "CHASE FU";
-            break;
-          case "@A":
-            tempCardEntry = "CHASE AP";
-            break;
-          case "@C1":
-            tempCardEntry = "CAPONE SAVOR";
-            break;
-          default:
-            tempCardEntry = "N/A";
-            break;
-        }
-      }
-      else tempCardEntry = "N/A"
-
-      specSheet.getRange(sheetInd, ccolWithCardType).setValue(tempCardEntry);
-      noteInd++;
-      sheetInd++;
-    } 
-    else {
-      //skip empty lines
-      noteInd++;
-    }
-  }
-  return;
-}
-
-
 //note cols
 const rowThatDropdownSheetStarts = 4, // for notes
 colWithBrokeDownCost = 36, //for notes
@@ -1409,6 +1187,188 @@ function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
       noteInd++;
       sheetInd++;
     }
+    else {
+      //skip empty lines
+      noteInd++;
+    }
+  }
+  return;
+}
+
+//----------extras----------//
+
+
+function test(){
+  //us normal col
+    const resFixedCol = 4,
+    resNonFixedCol = 5,
+    resReimbIn = 6,
+    checkInCol = 7,
+    checkReimbIn = 8,
+    resOutCol = 9,
+    resReimbOut = 10,
+    needTrans = 11,
+    needFood = 12,
+    needGroc = 13,
+    needOn = 14,
+    needItem = 15,
+    needMisc = 16,
+    wantTrans = 17,
+    wantFood = 18,
+    wantGroc = 19,
+    wantOn = 20,
+    wantItem = 21,
+    wantMisc = 22,
+    checkReimbOut = 23;
+
+  //us spec col
+    const resFixedColSpec = 4,
+    resNonFixedColSpec = 9,
+    resReimbInSpec = 14,
+    checkInColSpec = 19,
+    checkReimbInSpec = 24,
+    resOutColSpec = 29,
+    resReimbOutSPec = 34,
+    needTransSpec = 40,
+    needFoodSpec = 45,
+    needGrocSpec = 50,
+    needOnSpec = 55,
+    needItemSpec = 60,
+    needMiscSpec = 65,
+    wantTransSpec = 70,
+    wantFoodSpec = 75,
+    wantGrocSpec = 80,
+    wantOnSpec = 85,
+    wantItemSpec = 90,
+    wantMiscSpec = 95,
+    checkReimbOutSpec = 100;
+
+  var mo = 0, yr = 2025;
+  var date = new Date(yr, mo);
+  var specColNum = 4;
+
+  // addEntryRow(today, 5, 76, usSpecSheet, usSpecSheetHideMenu);
+  for (var normColNum = 4; normColNum < 24; normColNum++) {
+    var reimbNo = false;
+
+    if (normColNum == 10|| normColNum == 23) reimbNo = true;
+    customNoteToSheets(date, usSheet, usSpecSheet, usSpecSheetHideMenu, mo + 32, normColNum, reimbNo, 5, specColNum, specColNum + 4);
+    if (specColNum == 34) specColNum += 6;
+    else specColNum += 5;
+  }
+  // subButtonAct(checkOrResOut, needOrWantOrReimb, expenseType, amountOut, expenseNoteType, newExpenseNoteType, usDayVal, usSheet, usSpecSheet, usSpecSheetHideMenu);
+}
+
+
+//Print all notes cost and exp type (given it isn't empty) to spec sheet
+function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCol, reimbOrNot, monthEndRowsListCol, ccolWithBrokeDownCost, ccolWithReimbMark) {
+
+  //other cols relative to first one (reimb is exception)
+  var ccolWithExpTotCost = ccolWithBrokeDownCost + 1;
+  var ccolWithExpTypeNames = ccolWithBrokeDownCost + 2;
+  var ccolWithCardType = ccolWithBrokeDownCost + 3;
+
+  var rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowsListCol);
+  var startRow = rangeArr[0];
+  var lastRow = rangeArr[1];
+  var totalMonthLen = rangeArr[2];
+  var monthRow = rangeArr[3];
+
+  //Print all notes cost and exp type (given it isn't empty)
+  var notes = typeSheet.getRange(addRow, addCol).getNotes().toString().split("\n");
+  var noteInd = 0;
+  var sheetInd = startRow;
+
+  //Finding real notes length and checking if it is greater than the max
+  var findNoteLengthInd = 0;
+  var actualNoteLength = 0;
+  while (findNoteLengthInd < notes.length) {
+    if (notes[findNoteLengthInd].length > 0) actualNoteLength++;
+    findNoteLengthInd++;
+  }
+
+  //checks if enough space for note entries; extend if not
+  if (actualNoteLength > totalMonthLen) {
+    while (actualNoteLength > totalMonthLen) {
+      addEntryRow(date, 5, 104, specSheet, hideSheet);
+      lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
+      totalMonthLen = lastRow - startRow + 1;
+      Logger.log("extended w/ month len " + totalMonthLen + " note len " + actualNoteLength);
+    }
+  }
+
+  while (noteInd < notes.length && sheetInd <= lastRow) {
+    Logger.log(notes[noteInd]);
+    if (notes[noteInd].length > 0) { //line isn't empty (handling user typo error)
+      var tempEntry = notes[noteInd].split(": ");
+
+      //split the total cost & equation w/o tilde (if exists)
+
+      var tempCostEntry = tempEntry[0].replace(")", "").replace("~", "").split(" (")
+      Logger.log("total cost " + tempCostEntry);
+      var tempFormulaEntry = tempCostEntry[0].replace(/@([A-Z]+\w*)/, "").trim();
+      Logger.log("formula " + tempFormulaEntry);
+
+      // find credit card info (if exists)
+      var tempCardRegex = new RegExp("@([A-Z]+\w*)");
+      var tempCardEntry = tempCardRegex.exec(tempCostEntry[0]);
+      Logger.log("card " + tempCardEntry);
+
+      //if note in reimb, split the tilde (if it exists)
+      var tildeCheck = tempEntry[0].split(" ")[0];
+      if (reimbOrNot == true) {
+        if (tildeCheck == "~") {
+          //tilde; hence not reimbed
+          specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(false);
+        } 
+        else {
+          //not in reimb column or alr reimbed
+          specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(true);
+        }
+      }
+
+      //put values in respective columns
+      if (tempFormulaEntry != null) specSheet.getRange(sheetInd, ccolWithBrokeDownCost).setValue(tempFormulaEntry);
+
+      //no formula exists (1 cost)
+      if (tempCostEntry[1] == null && tempFormulaEntry != null) {
+        specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempFormulaEntry)
+      }
+      else {
+        //a formula exists
+        specSheet.getRange(sheetInd, ccolWithExpTotCost).setValue(tempCostEntry[1])
+      }
+      specSheet.getRange(sheetInd, ccolWithExpTypeNames).setValue(tempEntry[1]);
+
+      //card conditions
+      if (tempCardEntry != null) {
+        switch (tempCardEntry[0]) {
+          case "@D":
+            tempCardEntry = "DISCOVER";
+            break;
+          case "@B":
+            tempCardEntry = "BILT";
+            break;
+          case "@C":
+            tempCardEntry = "CHASE FU";
+            break;
+          case "@A":
+            tempCardEntry = "CHASE AP";
+            break;
+          case "@C1":
+            tempCardEntry = "CAPONE SAVOR";
+            break;
+          default:
+            tempCardEntry = "N/A";
+            break;
+        }
+      }
+      else tempCardEntry = "N/A"
+
+      specSheet.getRange(sheetInd, ccolWithCardType).setValue(tempCardEntry);
+      noteInd++;
+      sheetInd++;
+    } 
     else {
       //skip empty lines
       noteInd++;
