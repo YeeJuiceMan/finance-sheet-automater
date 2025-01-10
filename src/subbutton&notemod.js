@@ -888,7 +888,7 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
       individualButtonCol = endRowOrColListCol - 2;
     }
     else {
-      errorMsgHide.setValue("Single hide/show clicked;\nFinding range... " + individualButtonCol);
+      errorMsgHide.setValue("Single hide/show clicked;\nFinding range...");
       buttonRow = activeCell.getRow(); //get the row of the button clicked
       lastRowOrColForMonthOrCategory = hideSheet.getRange(buttonRow, endRowOrColListCol).getValue(); //get the last row or col of the month or category
       firstRowOrColForMonthOrCategory = hideSheet.getRange(buttonRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev month or category and add by 1
