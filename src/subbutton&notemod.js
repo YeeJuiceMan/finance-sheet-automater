@@ -273,7 +273,6 @@ twSpecSheetHideMenu = mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) S
 
 //out var
 typeSheetOut = consoleSheet.getRange("B2:C3"),
-errorMsgOut = consoleSheet.getRange("B26"),
 checkOrResOut = consoleSheet.getRange("C5:C6"),
 needOrWantOrReimb = consoleSheet.getRange("C7:C8"),
 expenseType = consoleSheet.getRange("C9:C10"),
@@ -281,39 +280,51 @@ amountOut = consoleSheet.getRange("C11:C12"),
 expenseNoteType = consoleSheet.getRange("C13:C14"),
 newExpenseNoteType = consoleSheet.getRange("C15:C16"),
 outCreditType = consoleSheet.getRange("C17:C18"),
+redOutButton = consoleSheet.getRange("B20"),
+greenOutButton = consoleSheet.getRange("C20"),
 usDayVal = consoleSheet.getRange("C22"),
 twDayVal = consoleSheet.getRange("C24"),
+errorMsgOut = consoleSheet.getRange("B26"),
 
 //in var
 typeSheetIn = consoleSheet.getRange("E2:F3"),
-errorMsgIn = consoleSheet.getRange("E20"),
 checkOrResIn = consoleSheet.getRange("F5:F6"),
 fixedOrNot = consoleSheet.getRange("F7:F8"),
 amountIn = consoleSheet.getRange("F9:F10"),
 incomeNoteType = consoleSheet.getRange("F11:F12"),
 newIncomeNoteType = consoleSheet.getRange("F13:F14"),
 inCreditType = consoleSheet.getRange("F15:F16"),
+redInButton = consoleSheet.getRange("E18"),
+greenInButton = consoleSheet.getRange("F18"),
+errorMsgIn = consoleSheet.getRange("E20"),
 
 //reimb var
 typeSheetReimb = consoleSheet.getRange("H2:I3"),
-errorMsgReimb = consoleSheet.getRange("H16"),
 reimbYear = consoleSheet.getRange("I5:I6"),
 reimbMonth = consoleSheet.getRange("I7:I8"),
 checkOrResReimb = consoleSheet.getRange("I9:I10"),
 nonReimbCell = consoleSheet.getRange("I11:I12"),
+redReimbButton = consoleSheet.getRange("H14"),
+greenReimbButton = consoleSheet.getRange("I14"),
+errorMsgReimb = consoleSheet.getRange("H16"),
 
-//extras
+//hide sheet vars
 usMonthEndRowListCol = 6,
 usCategoryEndColListCol = 12,
-twMonthEndRowListCol = 6;
+twMonthEndRowListCol = 6,
+usMonthButtonColLetter = "D",
+usYearButtonColLetter = "E",
+usCategoryButtonColLetter = "J",
+usCategoriesButtonColLetter = "K";
+
 
 
 function onEdit(e) {
   if (!e) {
     throw new Error(
-      'Please do not run the onEdit(e) function in the script editor window. '
-      + 'It runs automatically when you hand edit the spreadsheet. '
-      + 'See https://stackoverflow.com/a/63851123/13045193.'
+      'Please do not run the onEdit(e) function in the script editor window.\n'
+      + 'It runs automatically when you hand edit the spreadsheet.\n'
+      + 'See https://stackoverflow.com/a/63851123/13045193.\n'
     );
   }
   try {
@@ -329,12 +340,12 @@ function onEdit(e) {
     errorMsgReimb.setBackground("#e06666");
 
     //Reset all buttons
-    consoleSheet.getRange("B20").setValue(false);
-    consoleSheet.getRange("C20").setValue(false);
-    consoleSheet.getRange("E18").setValue(false);
-    consoleSheet.getRange("F18").setValue(false);
-    consoleSheet.getRange("H14").setValue(false);
-    consoleSheet.getRange("I14").setValue(false);
+    redOutButton.setValue(false);
+    greenOutButton.setValue(false);
+    redInButton.setValue(false);
+    greenInButton.setValue(false);
+    redReimbButton.setValue(false);
+    greenReimbButton.setValue(false);
   }
 }
 
@@ -347,11 +358,11 @@ function onButtonTrigger(e) {
     activeSheetName = e.source.getActiveSheet().getName();
 
   //for spec hide menu
-  if (reference[0] == "D" || reference[0] == "E"){ //hide month(s) buttons
+  if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
     if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usMonthEndRowListCol, "row");
   }
-  else if (reference[0] == "J" || reference[0] == "K"){ //hide category(s) buttons
+  else if (reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter){ //hide category(s) buttons
     if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usCategoryEndColListCol, "col");
   }
@@ -369,7 +380,7 @@ function onButtonTrigger(e) {
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     switch (reference){
-      case "B20": //red out
+      case redOutButton.getA1Notation(): //red out
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
@@ -392,7 +403,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "C20": //green out
+      case greenOutButton.getA1Notation(): //green out
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
@@ -416,7 +427,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "E18": //red in
+      case redInButton.getA1Notation(): //red in
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
 
@@ -439,7 +450,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "F18": //green in
+      case greenInButton.getA1Notation(): //green in
         activeCell.setValue(false);
         errorMsgIn.setValue("...");
         errorMsgIn.setBackground("#fbbc04");
@@ -463,7 +474,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "H14": //red reimb
+      case redReimbButton.getA1Notation(): //red reimb
         errorMsgReimb.setValue("...");
         errorMsgReimb.setBackground("#fbbc04");
         var needReimb;
@@ -484,7 +495,7 @@ function onButtonTrigger(e) {
         activeCell.setValue(false);
         return;
 
-      case "I14": //green reimb
+      case greenReimbButton.getA1Notation(): //green reimb
         errorMsgReimb.setValue("...");
         errorMsgReimb.setBackground("#fbbc04");
 
@@ -560,7 +571,7 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
 
   //vars for dropdown
   errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
+  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   errorMsgOut.setValue("Updating dropdown list...");
