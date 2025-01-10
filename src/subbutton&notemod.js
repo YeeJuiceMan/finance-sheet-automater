@@ -87,6 +87,7 @@ greenReimbButton = consoleSheet.getRange("I14"),
 errorMsgReimb = consoleSheet.getRange("H16"),
 
 //hide sheet vars
+errorMsgUsHide = usSpecSheetHideMenu.getRange("I27"),
 usMonthEndRowListCol = 6,
 usCategoryEndColListCol = 12,
 twMonthEndRowListCol = 6,
@@ -132,12 +133,15 @@ function onButtonTrigger(e) {
 
   //for spec hide menu
   if (reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter){ //hide month(s) buttons
-    if (activeSheetName == usSpecSheetHideMenu.getName())
-      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usMonthEndRowListCol, "row");
+    if (activeSheetName == usSpecSheetHideMenu.getName()) {
+
+      entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+    }
   }
   else if (reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter){ //hide category(s) buttons
-    if (activeSheetName == usSpecSheetHideMenu.getName())
-      entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usCategoryEndColListCol, "col");
+    if (activeSheetName == usSpecSheetHideMenu.getName()) {
+      entryHiding(activeCell, activeVal, usCategoryEndColListCol, "col", errorMsgUsHide, usSpecSheetHideMenu, usSpecSheet);
+    }
   }
 
   //console buttons
@@ -859,7 +863,10 @@ function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
 
 
 //hides certain rows or col entries based on pressed buttons
-function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOrColListCol, rowOrCol){
+function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorMsgHide, hideSheet, targetSpecSheet){
+    errorMsgHide.setValue("...");
+    errorMsgHide.setBackground("#fbbc04");
+
     //vars for readability
     let activeCellRange, //in the off chance the button is a merged button
     individualButtonCol = null, //in the off chance the button is a merged button
@@ -871,6 +878,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
     rowOrColRange;
 
     if (activeCell.isPartOfMerge()) { //if the button is part of a merged range, get the range & set rows accordingly
+      errorMsgHide.setValue("Mass hide/show clicked;\nFinding range...");
       activeCellRange = activeCell.getMergedRanges()[0]; //get the range of the clicked merged cell from the returned array
       activeCellRangeRow = activeCellRange.getRow(); //get the row of the merged
       activeCellRangeLastRow = activeCellRange.getLastRow(); //get the last row of the merged range
@@ -880,6 +888,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
       individualButtonCol = endRowOrColListCol - 2;
     }
     else {
+      errorMsgHide.setValue("Single hide/show clicked;\nFinding range...");
       buttonRow = activeCell.getRow(); //get the row of the button clicked
       lastRowOrCol = hideSheet.getRange(buttonRow, endRowOrColListCol).getValue(); //get the last row or col of the month or category
       prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev month or category and add by 1
@@ -888,6 +897,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
     rowOrColRange = lastRowOrCol - prevLastRowOrCol + 1; //get the range/number of rows or cols to hide
 
     if (activeVal == true) {
+      errorMsgHide.setValue("Hiding...");
       if (rowOrCol == "row") {
         targetSpecSheet.hideRows(prevLastRowOrCol, rowOrColRange);
       }
@@ -895,6 +905,7 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
         targetSpecSheet.hideColumns(prevLastRowOrCol, rowOrColRange);
     }
     else if (activeVal == false) {
+      errorMsgHide.setValue("Showing...");
       if (rowOrCol == "row")
         targetSpecSheet.showRows(prevLastRowOrCol, rowOrColRange);
       else if (rowOrCol == "col") {
@@ -903,8 +914,11 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOr
     }
 
     if (individualButtonCol != null) { //if the button is part of a merged range, set the value of the individual button as the merged range value
+      errorMsgHide.setValue("Setting individual button values to " + activeVal + "...");
       hideSheet.getRange(activeCellRangeRow, individualButtonCol, activeCellRangeLastRow - activeCellRangeRow + 1).setValue(activeVal);
     }
+    errorMsgHide.setValue("Done.");
+    errorMsgHide.setBackground("#93c47d");
 }
 
 //loop to find row num of current month
