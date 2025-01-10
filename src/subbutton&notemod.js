@@ -494,6 +494,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
     targetRow = lastRow;
   }
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
+  errorMsgOut.setValue(targetRow);
 
   //cell vars for readability
   let dateCell = specSheet.getRange(targetRow, ccolWithDate),
