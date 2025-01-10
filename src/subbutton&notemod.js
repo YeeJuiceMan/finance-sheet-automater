@@ -486,7 +486,7 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
-  errorMsgOut.setValue("Finding target row...");
+  errorMsgOut.setValue("Finding target row..." + startRow + " " + lastRow + " " + ccolWithBrokeDownCost);
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, monthEndRowListCol, checkReimbOutColSpec + 5, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
@@ -494,7 +494,6 @@ function subModSpecSheet(date, monthEndRowListCol, specSheet, hideSheet) {
     targetRow = lastRow;
   }
   else targetRow = findFirstBlankRow(specSheet, startRow, lastRow, ccolWithBrokeDownCost); //first blank row set as target row
-  errorMsgOut.setValue(targetRow);
 
   //cell vars for readability
   let dateCell = specSheet.getRange(targetRow, ccolWithDate),
