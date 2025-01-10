@@ -316,7 +316,16 @@ function onEdit(e) {
       + 'See https://stackoverflow.com/a/63851123/13045193.'
     );
   }
-  onButtonTrigger(e);
+  try {
+    onButtonTrigger(e);
+  }
+  catch (error) {
+    errorMsgOut.setValue("Error: " + error);
+    errorMsgOut.setBackground("#e06666");
+    errorMsgIn.setValue("Error: " + error);
+    errorMsgIn.setBackground("#e06666");
+    errorMsgReimb.setValue("Error: " + error);
+    errorMsgReimb.setBackground("#e06666");
 }
 
 
@@ -541,7 +550,7 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
 
   //vars for dropdown
   errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   errorMsgOut.setValue("Updating dropdown list...");
