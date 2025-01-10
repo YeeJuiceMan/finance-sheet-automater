@@ -328,11 +328,11 @@ function onButtonTrigger(e) {
     activeSheetName = e.source.getActiveSheet().getName();
 
   //for spec hide menu
-  if (refArr[0] == "D"){ //hide month buttons
+  if (refArr[0] == "D" || refArr[0] == "E"){ //hide month(s) buttons
     if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usMonthEndRowListCol, "row");
   }
-  else if (refArr[0] == "J"){ //hide category buttons
+  else if (refArr[0] == "J" || refArr[0] == "K"){ //hide category(s) buttons
     if (e.source.getActiveSheet() == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usCategoryEndColListCol, "col");
   }
@@ -1041,7 +1041,7 @@ function findSpecMonthRange(hideSheet, date, monthEndRowsListCol) {
 
 
 //hides certain rows or col entries based on pressed buttons
-function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonColToStartChecking, rowOrCol){
+function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, endRowOrColListCol, rowOrCol){
     //vars for readability
     let activeCellRange, //in the off chance the button is a merged button
     individualButtonCol = null, //in the off chance the button is a merged button
@@ -1052,14 +1052,14 @@ function entryHiding(activeCell, activeVal, hideSheet, targetSpecSheet, buttonCo
 
     if (activeCell.isPartOfMerge()) { //if the button is part of a merged range, get the range & set rows accordingly
       activeCellRange = activeCell.getMergedRanges()[0]; //get the range of the clicked merged cell from the returned array
-      lastRowOrCol = hideSheet.getRange(activeCellRange.getLastRow(), buttonColToStartChecking).getValue(); //get the last row or col of the months or categories
-      prevLastRowOrCol = hideSheet.getRange(activeCellRange.getRow() - 1, buttonColToStartChecking).getValue() + 1; //get the row or col of the prev months or categories and add by 1
-      individualButtonCol = buttonColToStartChecking - 1;
+      lastRowOrCol = hideSheet.getRange(activeCellRange.getLastRow(), endRowOrColListCol).getValue(); //get the last row or col of the months or categories
+      prevLastRowOrCol = hideSheet.getRange(activeCellRange.getRow() - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev months or categories and add by 1
+      individualButtonCol = endRowOrColListCol - 2;
     }
     else {
       buttonRow = activeCell.getRow(); //get the row of the button clicked
-      lastRowOrCol = hideSheet.getRange(buttonRow, buttonColToStartChecking).getValue(); //get the last row or col of the month or category
-      prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, buttonColToStartChecking).getValue() + 1; //get the row or col of the prev month or category and add by 1
+      lastRowOrCol = hideSheet.getRange(buttonRow, endRowOrColListCol).getValue(); //get the last row or col of the month or category
+      prevLastRowOrCol = hideSheet.getRange(buttonRow - 1, endRowOrColListCol).getValue() + 1; //get the row or col of the prev month or category and add by 1
     }
 
     rowOrColRange = lastRowOrCol - prevLastRowOrCol + 1; //get the range/number of rows or cols to hide
