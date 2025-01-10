@@ -99,14 +99,14 @@ usCategoriesButtonColLetter = "K";
 
 
 function onEdit(e) {
+  if (!e) {
+    throw new Error(
+      'Please do not run the onEdit(e) function in the script editor window.\n'
+      + 'It runs automatically when you hand edit the spreadsheet.\n'
+      + 'See https://stackoverflow.com/a/63851123/13045193.\n'
+    );
+  }
   try {
-    if (!e) {
-      throw new Error(
-        'Please do not run the onEdit(e) function in the script editor window.\n'
-        + 'It runs automatically when you hand edit the spreadsheet.\n'
-        + 'See https://stackoverflow.com/a/63851123/13045193.\n'
-      );
-    }
     onButtonTrigger(e);
   }
   catch (error) {
