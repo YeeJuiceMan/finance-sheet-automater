@@ -304,7 +304,7 @@ nonReimbCell = consoleSheet.getRange("I11:I12"),
 
 //extras
 usMonthEndRowListCol = 6,
-usCategoryEndColListCol = 11;
+usCategoryEndColListCol = 12;
 
 
 function onEdit(e) {
@@ -324,16 +324,15 @@ function onButtonTrigger(e) {
     const activeCell = e.range,
     reference = activeCell.getA1Notation(),
     activeVal = activeCell.getValue(),
-    refArr = reference.split('');
     activeSheetName = e.source.getActiveSheet().getName();
 
   //for spec hide menu
-  if (refArr[0] == "D" || refArr[0] == "E"){ //hide month(s) buttons
+  if (reference[0] == "D" || reference[0] == "E"){ //hide month(s) buttons
     if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usMonthEndRowListCol, "row");
   }
-  else if (refArr[0] == "J" || refArr[0] == "K"){ //hide category(s) buttons
-    if (e.source.getActiveSheet() == usSpecSheetHideMenu.getName())
+  else if (reference[0] == "J" || reference[0] == "K"){ //hide category(s) buttons
+    if (activeSheetName == usSpecSheetHideMenu.getName())
       entryHiding(activeCell, activeVal, usSpecSheetHideMenu, usSpecSheet, usCategoryEndColListCol, "col");
   }
 
