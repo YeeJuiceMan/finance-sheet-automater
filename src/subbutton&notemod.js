@@ -326,6 +326,7 @@ function onEdit(e) {
     errorMsgIn.setBackground("#e06666");
     errorMsgReimb.setValue("Error: " + error);
     errorMsgReimb.setBackground("#e06666");
+  }
 }
 
 
@@ -550,7 +551,7 @@ function subButtonAct(dayVal, monthEndRowListCol, typeSheet, specSheet, hideShee
 
   //vars for dropdown
   errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  let rangeArr = findSpecMonthRange(hideSheet, today, 5);
   let addRowSpec = rangeArr[0],
   addRowSpecLen = rangeArr[2];
   errorMsgOut.setValue("Updating dropdown list...");
@@ -1367,7 +1368,7 @@ function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
       if (needOrWantOrReimb.getValue() == "REIMB" && reimbedOrNot[0] == "~") {
         //tilde; hence not reimbed
         typeSheet.getRange(sheetInd, colWithReimbMark).setValue(false);
-      } 
+      }
       else {
         //not in reimb column or alr reimbed
         typeSheet.getRange(sheetInd, colWithReimbMark).setValue(true);
@@ -1379,7 +1380,7 @@ function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
       //no formula exists (1 cost)
       if (tempCostEntry[1] == null) {
         typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[0])
-      } 
+      }
       else {
         //a formula exists
         typeSheet.getRange(sheetInd, colWithExpTotCost).setValue(tempCostEntry[1])
@@ -1387,7 +1388,7 @@ function noteToSheets(typeSheet, addRow, addCol, needOrWantOrReimb) {
       typeSheet.getRange(sheetInd, colWithExpTypeNames).setValue(tempEntry[1]);
       noteInd++;
       sheetInd++;
-    } 
+    }
     else {
       //skip empty lines
       noteInd++;
