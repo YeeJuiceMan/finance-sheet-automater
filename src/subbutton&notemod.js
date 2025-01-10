@@ -286,7 +286,7 @@ twDayVal = consoleSheet.getRange("C24"),
 
 //in var
 typeSheetIn = consoleSheet.getRange("E2:F3"),
-errorMsgIn = consoleSheet.getRange("E18"),
+errorMsgIn = consoleSheet.getRange("E20"),
 checkOrResIn = consoleSheet.getRange("F5:F6"),
 fixedOrNot = consoleSheet.getRange("F7:F8"),
 amountIn = consoleSheet.getRange("F9:F10"),
