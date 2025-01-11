@@ -148,7 +148,7 @@ function onButtonTrigger(e) {
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
     switch (activeSheetName) {
-      case usSpecSheetHideMenu.getName():
+      case usSheetConfig.hideSheet.getName():
         if ((reference[0] == usMonthButtonColLetter || reference[0] == usYearButtonColLetter)) //hide month(s) buttons
             entryHiding(activeCell, activeVal, usMonthEndRowListCol, "row", errorMsgUsHide, usSheetConfig);
         else if ((reference[0] == usCategoryButtonColLetter || reference[0] == usCategoriesButtonColLetter)) //hide category(s) buttons
