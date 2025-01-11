@@ -151,7 +151,7 @@ function onButtonTrigger(e) {
   reference = activeCell.getA1Notation(),
   activeVal = activeCell.getValue(),
   activeSheetName = e.source.getActiveSheet().getName();
-  Logger.log("Button pressed: " + reference);
+  Logger.log("Button pressed: " + reference + " " + redOutButton.getA1Notation());
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
@@ -171,7 +171,7 @@ function onButtonTrigger(e) {
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     switch (reference){
-      case redOutButton.getA1Notation(): //red out
+      case (redOutButton.getA1Notation()): //red out
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
