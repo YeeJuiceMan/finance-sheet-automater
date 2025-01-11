@@ -351,22 +351,23 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
     if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amountOut.getValue());
   }
 
-  errorMsgOut.setValue("Adding amount...");
-  addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
+  revalidateDropdowns(addRow, addCol, addColSpec, amountOut, monthEndRowListCol, errorMsgOut, expenseNoteType, newExpenseNoteType, typeSheet);
+  // errorMsgOut.setValue("Adding amount...");
+  // addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
 
-  //vars for dropdown
-  errorMsgOut.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
-  let addRowSpec = rangeArr[0],
-  addRowSpecLen = rangeArr[2];
-  errorMsgOut.setValue("Updating dropdown list...");
-  let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
-  dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
+  // //vars for dropdown
+  // errorMsgOut.setValue("Finding spec sheet month range...");
+  // let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  // let addRowSpec = rangeArr[0],
+  // addRowSpecLen = rangeArr[2];
+  // errorMsgOut.setValue("Updating dropdown list...");
+  // let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
+  // dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
-  //clear new expense type cell & revalidate expnotetype dropdown list
-  expenseNoteType.setValue("N/A");
-  newExpenseNoteType.clearContent();
-  expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
+  // //clear new expense type cell & revalidate expnotetype dropdown list
+  // expenseNoteType.setValue("N/A");
+  // newExpenseNoteType.clearContent();
+  // expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
 
   return;
 }
@@ -402,22 +403,23 @@ function addButtonAct(monthEndRowListCol, sheetConfig){
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
-  errorMsgIn.setValue("Adding amount...");
-  addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
+  revalidateDropdowns(addRow, addCol, addColSpec, amountIn, monthEndRowListCol, errorMsgIn, incomeNoteType, newIncomeNoteType, typeSheet);
+  // errorMsgIn.setValue("Adding amount...");
+  // addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
 
-  //vars for dropdown
-  errorMsgIn.setValue("Finding spec sheet month range...");
-  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
-  let addRowSpec = rangeArr[0],
-  addRowSpecLen = rangeArr[2];
-  errorMsgIn.setValue("Updating dropdown list...");
-  let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
-  dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
+  // //vars for dropdown
+  // errorMsgIn.setValue("Finding spec sheet month range...");
+  // let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  // let addRowSpec = rangeArr[0],
+  // addRowSpecLen = rangeArr[2];
+  // errorMsgIn.setValue("Updating dropdown list...");
+  // let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
+  // dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
-  //clear new income type cell & revalidate incomenotetype dropdown list
-  incomeNoteType.setValue("N/A");
-  newIncomeNoteType.clearContent();
-  incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
+  // //clear new income type cell & revalidate incomenotetype dropdown list
+  // incomeNoteType.setValue("N/A");
+  // newIncomeNoteType.clearContent();
+  // incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
 
   return;
 }
@@ -466,25 +468,26 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
 }
 
 
+//revalidates dropdowns for console sheet
+function revalidateDropdowns(addRow, addCol, addColSpec, amount, monthEndRowListCol, errorMsg, noteType, newNoteType, typeSheet) {
+  errorMsg.setValue("Adding amount...");
+  addMoney(addRow, addCol, amount.getValue(), typeSheet);
 
-// function revalidateDropdowns(addRow, addCol, amount, errorMsg, noteType, newNoteType, sheetConfig) {
-//   errorMsgOut.setValue("Adding amount...");
-//   addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
+  //vars for dropdown
+  errorMsg.setValue("Finding spec sheet month range...");
+  let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
+  let addRowSpec = rangeArr[0],
+  addRowSpecLen = rangeArr[2];
+  errorMsg.setValue("Updating dropdown list...");
+  let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
+  dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
 
-//   //vars for dropdown
-//   errorMsgOut.setValue("Finding spec sheet month range...");
-//   let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
-//   let addRowSpec = rangeArr[0],
-//   addRowSpecLen = rangeArr[2];
-//   errorMsgOut.setValue("Updating dropdown list...");
-//   let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
-//   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
-
-//   //clear new expense type cell & revalidate expnotetype dropdown list
-//   expenseNoteType.setValue("N/A");
-//   newExpenseNoteType.clearContent();
-//   expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
-// }
+  //clear new expense type cell & revalidate expnotetype dropdown list
+  noteType.setValue("N/A");
+  newNoteType.clearContent();
+  noteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
+  return;
+}
 
 
 //----------spec sheet mods----------//
