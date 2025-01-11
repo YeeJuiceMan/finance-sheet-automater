@@ -1,3 +1,6 @@
+//----------global vars----------//
+
+
 //sheet obj config
 const spreadSheetConfig = {
   get spreadsheet() {
@@ -103,6 +106,10 @@ wantStartSpec = 69,
 wantEndSpec = 98,
 checkReimbOutColSpec = 99;
 
+
+//--------------------edit functions--------------------//
+
+
 function onEdit(e) {
   if (!e) {
     throw new Error(
@@ -144,6 +151,7 @@ function onButtonTrigger(e) {
   reference = activeCell.getA1Notation(),
   activeVal = activeCell.getValue(),
   activeSheetName = e.source.getActiveSheet().getName();
+  Logger.log("Button pressed: " + reference);
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
@@ -162,7 +170,6 @@ function onButtonTrigger(e) {
 
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
-    Logger.log("Button pressed: " + reference);
     switch (reference){
       case redOutButton.getA1Notation(): //red out
         errorMsgOut.setValue("...");
