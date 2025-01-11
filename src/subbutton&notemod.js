@@ -162,6 +162,7 @@ function onButtonTrigger(e) {
 
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
+    Logger.log("Button pressed: " + reference);
     switch (reference){
       case redOutButton.getA1Notation(): //red out
         errorMsgOut.setValue("...");
