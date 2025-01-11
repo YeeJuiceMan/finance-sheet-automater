@@ -5,7 +5,7 @@ const spreadSheetConfig = {
     return (this.spreadsheet = SpreadsheetApp.getActiveSpreadsheet()); //running under the assumption that this is a bound script
   },
 };
-function sheetConfig(typeSheet, specSheet, hideSheet, hideErrMsg, monthEndRowListCol, categoryEndColListCol, monthButtonColLetter, yearButtonColLetter, categoryButtonColLetter, categoriesButtonColLetter) {
+function sheetConfig(typeSheet, specSheet, hideSheet) {
   this.typeSheet = typeSheet;
   this.specSheet = specSheet;
   this.hideSheet = hideSheet;
