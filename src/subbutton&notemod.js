@@ -168,11 +168,10 @@ function onButtonTrigger(e) {
     }
   }
 
-  let yes = redOutButton.getA1Notation();
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     switch (reference){
-      case yes: //red out
+      case "B20": //red out
       Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
