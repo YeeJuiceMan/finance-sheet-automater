@@ -171,7 +171,8 @@ function onButtonTrigger(e) {
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     switch (reference){
-      case "B20": //red out
+      case redOutButton.getA1Notation(): //red out
+      Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
