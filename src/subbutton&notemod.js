@@ -163,7 +163,7 @@ function onButtonTrigger(e) {
         break;
 
       default: //extra button conditions (does nothing)
-        return;
+        break;
     }
   }
 
@@ -171,7 +171,7 @@ function onButtonTrigger(e) {
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
     Logger.log("Button pressed: " + reference + " " + redOutButton.getA1Notation() + " " + activeSheetName + " " + consoleSheet.getName() + " " + activeVal);
     switch (reference){
-      case "B20": //red out
+      case redOutButton.getA1Notation(): //red out
       Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
