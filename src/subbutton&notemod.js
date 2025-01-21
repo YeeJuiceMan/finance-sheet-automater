@@ -1256,7 +1256,7 @@ function test(){
     var reimbNo = false;
 
     if (normColNum == 10|| normColNum == 23) reimbNo = true;
-    customNoteToSheets(date, usSheetConfig.typeSheet, usSheetConfig.specSheet, usSheetConfig.hideSheet, mo + 32, normColNum, reimbNo, 5, specColNum, specColNum + 4);
+    customNoteToSheets(date, usSheetConfig.typeSheet, usSheetConfig.specSheet, usSheetConfig.hideSheet, mo + 32, normColNum, reimbNo, usMonthEndRowListCol, specColNum, specColNum + 4);
     if (specColNum == 34) specColNum += 6;
     else specColNum += 5;
   }
@@ -1294,7 +1294,7 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
   //checks if enough space for note entries; extend if not
   if (actualNoteLength > totalMonthLen) {
     while (actualNoteLength > totalMonthLen) {
-      addEntryRow(date, 5, 104, specSheet, hideSheet);
+      addEntryRow(date, monthEndRowsListCol, 104, specSheet, hideSheet);
       lastRow = hideSheet.getRange(monthRow, monthEndRowsListCol).getValue();
       totalMonthLen = lastRow - startRow + 1;
       Logger.log("extended w/ month len " + totalMonthLen + " note len " + actualNoteLength);
