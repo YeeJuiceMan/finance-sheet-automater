@@ -209,9 +209,9 @@ function onButtonTrigger(e) {
 
         if (typeSheetOut.getValue() == "US") {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
-          subModSpecSheet(new Date(), usMonthEndRowListCol, usSpecSheet, usSpecSheetHideMenu);
+          subModSpecSheet(new Date(), usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
-          subModSpecSheet(new Date(), twMonthEndRowListCol, twSpecSheet, twSpecSheetHideMenu);
+          subModSpecSheet(new Date(), twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgOut.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
@@ -272,9 +272,9 @@ function onButtonTrigger(e) {
         var needReimb;
 
         if (typeSheetReimb.getValue() == "US") {
-          needReimb = checkReimb(usMonthEndRowListCol, usSpecSheet, usSpecSheetHideMenu)
+          needReimb = checkReimb(usMonthEndRowListCol, usSheetConfig)
         } else if (typeSheetReimb.getValue() == "TW") {
-          needReimb = checkReimb(twMonthEndRowListCol, twSpecSheet, twSpecSheetHideMenu)
+          needReimb = checkReimb(twMonthEndRowListCol, twSheetConfig)
         }
 
         if (needReimb == true) {
