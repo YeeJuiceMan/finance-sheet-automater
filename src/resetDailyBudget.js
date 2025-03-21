@@ -1,4 +1,5 @@
 function resetDailyBudget() {
+  // other users cannot access this sheet; user must input their own URL
   var conSheet = SpreadsheetApp.openByUrl("https://docs.google.com/spreadsheets/d/1IgGVDEgjKiO_6tKE7XQ7KtM6BFfMHtrEnh8wXgfTDHA/edit#gid=1961861177").getSheetByName("Console");
 
   if (conSheet.getRange("C22").getValue() > conSheet.getRange("C23").getValue()){
