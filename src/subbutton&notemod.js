@@ -609,7 +609,6 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
       creditCell = specSheet.getRange(targetRow, ccolWithCardType),
       reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark);
 
-      dateCell.setValue(date); //set date
       brokeDownCostCell.setValue(amountOutVal); //set cost
       totCostCell.setValue(amountOutVal); //set total cost the same as cost
       creditCell.setValue(outCreditTypeVal); //set credit type
@@ -623,10 +622,10 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
       brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
       totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
 
-      dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
       brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
       totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
     }
+    dateCell.setValue(date); //set date (regardless of new or old entry)
   }
 
 
@@ -654,6 +653,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   inCreditTypeVal = inCreditType.getValue();
 
   //CHECK
+  errorMsgIn.setValue("Finding columns...");
   if (checkOrResInVal == "CHECK") ccolWithDate = findAddCol(specSheet, null, "IN", "CHECK", "spec");
 
   //RES
@@ -666,6 +666,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   ccolWithCardType = ccolWithDate + 4;
 
   //finding range of month in spec sheet to find target row
+  errorMsgIn.setValue("Finding month range...");
   let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
@@ -673,6 +674,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  errorMsgIn.setValue("Finding target row...");
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, monthEndRowListCol, checkReimbOutColSpec + 5, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
@@ -690,6 +692,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
 
   //note entry dne
   if (incomeNoteTypeVal == "N/A") {
+    errorMsgIn.setValue("Note is N/A.\nAdding new entry...");
     dateCell.setValue(date); //set date
     brokeDownCostCell.setValue(amountInVal); //set cost
     totCostCell.setValue(amountInVal); //set total cost the same as cost
@@ -697,6 +700,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
     creditCell.setValue(inCreditTypeVal); //set credit type
   }
   else { //possible existing expense type
+    errorMsgIn.setValue("Note is not N/A.\nFinding existing entry...");
     let newTargetRow = startRow;
     while (incomeNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithInTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
 
@@ -704,23 +708,35 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
 
     //extra conditions if the credit type differs from what's entered; add to original target row as new entry
     if (creditCell.getValue() != inCreditTypeVal) {
+      errorMsgIn.setValue("Credit does not match.\nAdding new entry...");
       creditCell = specSheet.getRange(targetRow, ccolWithCardType); //reset to prev target row
 
-      dateCell.setValue(date); //set date
       brokeDownCostCell.setValue(amountInVal); //set cost
       totCostCell.setValue(amountInVal); //set total cost the same as cost
       inTypeCell.setValue(incomeNoteTypeVal); //set exp type as current as it is not N/A
       creditCell.setValue(inCreditTypeVal); //set credit type
     }
+    else { //exact same entry with a new cost
+      //update remaining cells to new target row
+      errorMsgIn.setValue("Reimb and credit match.\nUpdating existing entry...");
+      dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
+      brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
+      totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
 
-    //update remaining cells to new target row
-    dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
-    brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
-    totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
+      brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
+      totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
+    }
 
     dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
-    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
-    totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
+
+    //update remaining cells to new target row
+    // dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
+    // brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
+    // totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
+
+    // dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
+    // brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
+    // totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
   }
 
 
