@@ -152,13 +152,15 @@ function onButtonTrigger(e) {
   activeVal = activeCell.getValue(),
   activeSheetName = e.source.getActiveSheet().getName();
 
-  //default error output
-  errorMsgOut.setValue("...");
-  errorMsgIn.setValue("...");
-  errorMsgReimb.setValue("...");
-  errorMsgOut.setBackground("#93c47d");
-  errorMsgIn.setBackground("#93c47d");
-  errorMsgReimb.setBackground("#93c47d");
+  //default error output (assuming exception happened)
+  if (errorMsgOut.getValue() = "Exception happened.") {
+    errorMsgOut.setValue("...");
+    errorMsgIn.setValue("...");
+    errorMsgReimb.setValue("...");
+    errorMsgOut.setBackground("#93c47d");
+    errorMsgIn.setBackground("#93c47d");
+    errorMsgReimb.setBackground("#93c47d");
+  }
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
