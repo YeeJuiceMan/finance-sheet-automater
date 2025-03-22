@@ -332,7 +332,7 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
 
   //RES
   if (checkOrResOut.getValue() == "RES") {
-    if (needOrWantOrReimb == "REIMB OUT") {
+    if (needOrWantOrReimbVal == "REIMB OUT") {
       addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
     }
@@ -359,7 +359,16 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
     if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amountOut.getValue());
   }
 
-  revalidateDropdowns(today, addRow, addCol, addColSpec, amountOut, monthEndRowListCol, errorMsgOut, expenseNoteType, newExpenseNoteType, sheetConfig);
+  addRevalidateDropdowns(today,
+                         addRow,
+                         addCol,
+                         addColSpec,
+                         amountOut,
+                         monthEndRowListCol,
+                         errorMsgOut,
+                         expenseNoteType,
+                         newExpenseNoteType,
+                         sheetConfig);
   // errorMsgOut.setValue("Adding amount...");
   // addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
 
@@ -409,7 +418,16 @@ function addButtonAct(monthEndRowListCol, sheetConfig){
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
-  revalidateDropdowns(today, addRow, addCol, addColSpec, amountIn, monthEndRowListCol, errorMsgIn, incomeNoteType, newIncomeNoteType, sheetConfig);
+  addRevalidateDropdowns(today,
+                         addRow,
+                         addCol,
+                         addColSpec,
+                         amountIn,
+                         monthEndRowListCol,
+                         errorMsgIn,
+                         incomeNoteType,
+                         newIncomeNoteType,
+                         sheetConfig);
   // errorMsgIn.setValue("Adding amount...");
   // addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
 
@@ -474,8 +492,8 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
 }
 
 
-//revalidates dropdowns for console sheet
-function revalidateDropdowns(today, addRow, addCol, addColSpec, amount, monthEndRowListCol, errorMsg, noteType, newNoteType, sheetConfig) {
+//adds value to specified cell & revalidates dropdowns for console sheet
+function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, monthEndRowListCol, errorMsg, noteType, newNoteType, sheetConfig) {
   let typeSheet = sheetConfig.typeSheet,
   specSheet = sheetConfig.specSheet,
   hideSheet = sheetConfig.hideSheet;
@@ -721,6 +739,7 @@ function addMoney(addRow, addCol, amount, typeSheet){
   let curEq = typeSheet.getRange(addRow, addCol).getFormula();
   if (curEq == "=0") typeSheet.getRange(addRow, addCol).setFormula(amount);
   else typeSheet.getRange(addRow, addCol).setFormula(curEq + "+" + amount);
+  return;
 }
 
 
