@@ -152,6 +152,14 @@ function onButtonTrigger(e) {
   activeVal = activeCell.getValue(),
   activeSheetName = e.source.getActiveSheet().getName();
 
+  //default error output
+  errorMsgOut.setValue("...");
+  errorMsgIn.setValue("...");
+  errorMsgReimb.setValue("...");
+  errorMsgOut.setBackground("#fbbc04");
+  errorMsgIn.setBackground("#fbbc04");
+  errorMsgReimb.setBackground("#fbbc04");
+
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
     switch (activeSheetName) {
@@ -256,9 +264,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          inNoteMod(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, usSheet)
+          addModSpecSheet(new Date(), usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") {
-          inNoteMod(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, twSheet)
+          addModSpecSheet(new Date(), twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgIn.setValue("Notes added to " + typeSheetOut.getValue() + ".");
