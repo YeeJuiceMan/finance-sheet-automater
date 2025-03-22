@@ -156,9 +156,9 @@ function onButtonTrigger(e) {
   errorMsgOut.setValue("...");
   errorMsgIn.setValue("...");
   errorMsgReimb.setValue("...");
-  errorMsgOut.setBackground("#f6b26b");
-  errorMsgIn.setBackground("#f6b26b");
-  errorMsgReimb.setBackground("#f6b26b");
+  errorMsgOut.setBackground("#93c47d");
+  errorMsgIn.setBackground("#93c47d");
+  errorMsgReimb.setBackground("#93c47d");
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
@@ -182,7 +182,7 @@ function onButtonTrigger(e) {
       case redOutButton.getA1Notation(): //red out
       Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
-        errorMsgOut.setBackground("#93c47d");
+        errorMsgOut.setBackground("#fbbc04");
 
         //if there's no input of money or the amountOut is 0 do nothing return error msg
         if (amountOut.getValue().length <= 0 || amountOut.getValue() == 0) {
