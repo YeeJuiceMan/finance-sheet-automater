@@ -333,6 +333,7 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
   //RES
   if (checkOrResOut.getValue() == "RES") {
     if (needOrWantOrReimbVal == "REIMB OUT") {
+      needOrWantOrReimb.setBackground("#cccccc");
       addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
     }
