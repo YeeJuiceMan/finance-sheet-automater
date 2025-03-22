@@ -182,7 +182,7 @@ function onButtonTrigger(e) {
       case redOutButton.getA1Notation(): //red out
       Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
-        errorMsgOut.setBackground("#fbbc04");
+        errorMsgOut.setBackground("#93c47d");
 
         //if there's no input of money or the amountOut is 0 do nothing return error msg
         if (amountOut.getValue().length <= 0 || amountOut.getValue() == 0) {
