@@ -156,9 +156,9 @@ function onButtonTrigger(e) {
   errorMsgOut.setValue("...");
   errorMsgIn.setValue("...");
   errorMsgReimb.setValue("...");
-  errorMsgOut.setBackground("#fbbc04");
-  errorMsgIn.setBackground("#fbbc04");
-  errorMsgReimb.setBackground("#fbbc04");
+  errorMsgOut.setBackground("#f6b26b");
+  errorMsgIn.setBackground("#f6b26b");
+  errorMsgReimb.setBackground("#f6b26b");
 
   //for spec hide menu
   if (activeCell.getRow() >= 6) { //if the active cell's rows is in the range of the buttons assuming within hide menu
