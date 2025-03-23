@@ -764,11 +764,11 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
       if (inTypeList[i] == expType[1]) {
-        targetInRow = i;
+        targetSpecInRow = i;
         break;
       }
     }
-  } else targetInRow = findFirstBlankRow(specSheet, targetSpecInRow, monthSpecEndRow, totCostColInSpec); //first blank row set as target row
+  } else targetSpecInRow = findFirstBlankRow(specSheet, targetSpecInRow, monthSpecEndRow, totCostColInSpec); //first blank row set as target row
 
   // out reimb definitely has entry (no need to check inclusion)
   for (let i = 0; i < outTypeList.length; i++) {
