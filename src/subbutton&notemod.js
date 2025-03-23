@@ -764,7 +764,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
         break;
       }
     }
-  } else targetInRow = findFirstBlankRow(specSheet, startRow, lastRow, totCostColInSpec); //first blank row set as target row
+  } else targetInRow = findFirstBlankRow(specSheet, targetSpecInRow, monthSpecEndRow, totCostColInSpec); //first blank row set as target row
 
   // out reimb definitely has entry (no need to check inclusion)
   for (let i = 0; i < outTypeList.length; i++) {
