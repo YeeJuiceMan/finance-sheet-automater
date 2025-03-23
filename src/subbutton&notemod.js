@@ -744,11 +744,13 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   totCostColInSpec = findAddCol(specSheet, null, "REIMB IN", checkOrResVal, "spec") + 2; //find reimb in col
 
   // other reference columns
-  let formulaColOutSpec = totCostColOutSpec - 1,
+  let dateColOutSpec = totCostColOutSpec - 2,
+  formulaColOutSpec = totCostColOutSpec - 1,
   expTypeColOutSpec = totCostColOutSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColOutSpec + 3;
   let expTypeColInSpec = totCostColInSpec + 1, //reimb in has no reimb mark
-  formulaColInSpec = totCostColInSpec - 1;
+  formulaColInSpec = totCostColInSpec - 1,
+  dateColInSpec = totCostColInSpec - 2;
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   errorMsgReimb.setValue("Finding target rows...");
@@ -781,10 +783,12 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   errorMsgReimb.setValue("Adding amount & marking reimb...");
   addMoney(typeRow, typeCol, expType[0], typeSheet);
   specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
-  specSheet.getRange(targetSpecOutRow, formulaColInSpec).setValue(specSheet.getRange(targetSpecOutRow, formulaColOutSpec).getValue()); //copy formula over
+  specSheet.getRange(targetSpecInRow, formulaColInSpec).setValue(specSheet.getRange(targetSpecOutRow, formulaColOutSpec).getValue()); //copy formula over
+  specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
+  
   specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(specSheet.getRange(targetSpecInRow, totCostColInSpec).getValue() + "+" + expType[0]); //add to total cost
   specSheet.getRange(targetSpecInRow, expTypeColInSpec).setValue(expType[1]); //set exp type as current as it is not N/A
-  specSheet.getRange(targetSpecInRow, ccolWithDate).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
+  specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
 
   return;
 }
