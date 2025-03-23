@@ -12,4 +12,11 @@ function resetDailyBudget() {
 
   conSheet.getRange("C22").setValue("=" + 0);
   conSheet.getRange("C24").setValue("=" + 0);
+
+  conSheet.getRange("B26").setValue("...");
+  conSheet.getRange("E20").setValue("...");
+  conSheet.getRange("H16").setValue("...");
+  conSheet.getRange("B26").setBackground("#93c47d");
+  conSheet.getRange("E20").setBackground("#93c47d");
+  conSheet.getRange("H16").setBackground("#93c47d");
 }
