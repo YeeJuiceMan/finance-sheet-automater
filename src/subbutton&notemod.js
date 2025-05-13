@@ -732,6 +732,8 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   targetSpecOutRow = specRangeArr[0], //for spec
   monthSpecEndRow = specRangeArr[1]; //for spec
 
+  Logger.log("Month range:" + specRangeArr);
+
   //find cols with expense type names & reimb mark
   errorMsgReimb.setValue("Finding columns...");
   let checkOrResVal = checkOrResReimb.getValue();
