@@ -61,6 +61,21 @@ redReimbButton = consoleSheet.getRange("H14"),
 greenReimbButton = consoleSheet.getRange("I14"),
 errorMsgReimb = consoleSheet.getRange("H16");
 
+//undo buffer vars (up to 2 buffers)
+//each element represents the following:
+// 0: typeSheet
+// 1: num column modded
+// 2: num row modded
+// 3: num original value
+// 4: spec column modded
+// 5: spec row modded
+// 6: spec original date
+// 7: spec original formula
+// 8: spec original total
+// 9: spec original type
+// 10: spec original credit type
+// const undoBuffer1 = consoleSheet.getRange("B22:B23"),
+
 //hide sheet vars
 const errorMsgUsHide = usSheetConfig.hideSheet.getRange("N2"),
 usMonthEndRowListCol = 6,
@@ -256,9 +271,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          inNoteMod(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, usSheet)
+          addModSpecSheet(new Date(), usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") {
-          inNoteMod(checkOrResIn, fixedOrNot, amountIn, incomeNoteType, newIncomeNoteType, twSheet)
+          addModSpecSheet(new Date(), twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgIn.setValue("Notes added to " + typeSheetOut.getValue() + ".");
@@ -292,9 +307,9 @@ function onButtonTrigger(e) {
         errorMsgReimb.setBackground("#fbbc04");
 
         if (typeSheetReimb.getValue() == "US") {
-          alrReimbedNoteMod(year, month, nonReimbCell, usSheet);
+          alrReimbModSpecSheet(usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetReimb.getValue() == "TW") {
-          alrReimbedNoteMod(year, month, nonReimbCell, twSheet);
+          alrReimbModSpecSheet(twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgReimb.setValue("Item reimbed.");
@@ -321,7 +336,7 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
   let typeSheet = sheetConfig.typeSheet,
   specSheet = sheetConfig.specSheet;
 
-  let addRow = findAddRow(sheetConfig.typeSheet, today),
+  let addRow = findAddRow(typeSheet, today),
   addCol,
   addColSpec, //for dropdown list
   expenseTypeVal = expenseType.getValue(),
@@ -332,7 +347,8 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
 
   //RES
   if (checkOrResOut.getValue() == "RES") {
-    if (needOrWantOrReimb == "REIMB OUT") {
+    if (needOrWantOrReimbVal == "REIMB OUT") {
+      needOrWantOrReimb.setBackground("#cccccc");
       addCol = findAddCol(typeSheet, expenseTypeVal, "REIMB OUT", "RES", "type");
       addColSpec = findAddCol(specSheet, expenseTypeVal, "REIMB OUT", "RES", "spec") + 3; //by default settles on date col
     }
@@ -359,23 +375,16 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
     if (needOrWantOrReimbVal != "REIMB OUT") dayVal.setValue("=" + curDailyVal + "+" + amountOut.getValue());
   }
 
-  revalidateDropdowns(today, addRow, addCol, addColSpec, amountOut, monthEndRowListCol, errorMsgOut, expenseNoteType, newExpenseNoteType, sheetConfig);
-  // errorMsgOut.setValue("Adding amount...");
-  // addMoney(addRow, addCol, amountOut.getValue(), typeSheet);
-
-  // //vars for dropdown
-  // errorMsgOut.setValue("Finding spec sheet month range...");
-  // let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
-  // let addRowSpec = rangeArr[0],
-  // addRowSpecLen = rangeArr[2];
-  // errorMsgOut.setValue("Updating dropdown list...");
-  // let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
-  // dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
-
-  // //clear new expense type cell & revalidate expnotetype dropdown list
-  // expenseNoteType.setValue("N/A");
-  // newExpenseNoteType.clearContent();
-  // expenseNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
+  addRevalidateDropdowns(today,
+                         addRow,
+                         addCol,
+                         addColSpec,
+                         amountOut,
+                         monthEndRowListCol,
+                         errorMsgOut,
+                         expenseNoteType,
+                         newExpenseNoteType,
+                         sheetConfig);
 
   return;
 }
@@ -409,23 +418,16 @@ function addButtonAct(monthEndRowListCol, sheetConfig){
     addColSpec = findAddCol(typeSheet, null, fixedOrNotVal, "RES", "spec") + 3;
   }
 
-  revalidateDropdowns(today, addRow, addCol, addColSpec, amountIn, monthEndRowListCol, errorMsgIn, incomeNoteType, newIncomeNoteType, sheetConfig);
-  // errorMsgIn.setValue("Adding amount...");
-  // addMoney(addRow, addCol, amountIn.getValue(), typeSheet); // adds amount to curr eqn
-
-  // //vars for dropdown
-  // errorMsgIn.setValue("Finding spec sheet month range...");
-  // let rangeArr = findSpecMonthRange(hideSheet, today, monthEndRowListCol);
-  // let addRowSpec = rangeArr[0],
-  // addRowSpecLen = rangeArr[2];
-  // errorMsgIn.setValue("Updating dropdown list...");
-  // let dropdownArr = specSheet.getRange(addRowSpec, addColSpec, addRowSpecLen, 1).getValues();
-  // dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
-
-  // //clear new income type cell & revalidate incomenotetype dropdown list
-  // incomeNoteType.setValue("N/A");
-  // newIncomeNoteType.clearContent();
-  // incomeNoteType.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(dropdownArr).build());
+  addRevalidateDropdowns(today,
+                         addRow,
+                         addCol,
+                         addColSpec,
+                         amountIn,
+                         monthEndRowListCol,
+                         errorMsgIn,
+                         incomeNoteType,
+                         newIncomeNoteType,
+                         sheetConfig);
 
   return;
 }
@@ -474,8 +476,8 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
 }
 
 
-//revalidates dropdowns for console sheet
-function revalidateDropdowns(today, addRow, addCol, addColSpec, amount, monthEndRowListCol, errorMsg, noteType, newNoteType, sheetConfig) {
+//adds value to specified cell & revalidates dropdowns for console sheet
+function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, monthEndRowListCol, errorMsg, noteType, newNoteType, sheetConfig) {
   let typeSheet = sheetConfig.typeSheet,
   specSheet = sheetConfig.specSheet,
   hideSheet = sheetConfig.hideSheet;
@@ -590,7 +592,6 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
       creditCell = specSheet.getRange(targetRow, ccolWithCardType),
       reimbCell = specSheet.getRange(targetRow, ccolWithReimbMark);
 
-      dateCell.setValue(date); //set date
       brokeDownCostCell.setValue(amountOutVal); //set cost
       totCostCell.setValue(amountOutVal); //set total cost the same as cost
       creditCell.setValue(outCreditTypeVal); //set credit type
@@ -604,10 +605,10 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
       brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
       totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
 
-      dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
       brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
       totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
     }
+    dateCell.setValue(date); //set date (regardless of new or old entry)
   }
 
 
@@ -635,6 +636,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   inCreditTypeVal = inCreditType.getValue();
 
   //CHECK
+  errorMsgIn.setValue("Finding columns...");
   if (checkOrResInVal == "CHECK") ccolWithDate = findAddCol(specSheet, null, "IN", "CHECK", "spec");
 
   //RES
@@ -647,6 +649,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   ccolWithCardType = ccolWithDate + 4;
 
   //finding range of month in spec sheet to find target row
+  errorMsgIn.setValue("Finding month range...");
   let rangeArr = findSpecMonthRange(hideSheet, date, monthEndRowListCol);
   let startRow = rangeArr[0],
   lastRow = rangeArr[1],
@@ -654,6 +657,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   targetRow; //the row to add entry
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  errorMsgIn.setValue("Finding target row...");
   if (!specSheet.getRange(lastRow, ccolWithBrokeDownCost).isBlank()) {
     addEntryRow(date, monthEndRowListCol, checkReimbOutColSpec + 5, specSheet, hideSheet);
     lastRow++; //will only extend in 1 increments
@@ -671,6 +675,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
 
   //note entry dne
   if (incomeNoteTypeVal == "N/A") {
+    errorMsgIn.setValue("Note is N/A.\nAdding new entry...");
     dateCell.setValue(date); //set date
     brokeDownCostCell.setValue(amountInVal); //set cost
     totCostCell.setValue(amountInVal); //set total cost the same as cost
@@ -678,6 +683,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
     creditCell.setValue(inCreditTypeVal); //set credit type
   }
   else { //possible existing expense type
+    errorMsgIn.setValue("Note is not N/A.\nFinding existing entry...");
     let newTargetRow = startRow;
     while (incomeNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithInTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
 
@@ -685,25 +691,27 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
 
     //extra conditions if the credit type differs from what's entered; add to original target row as new entry
     if (creditCell.getValue() != inCreditTypeVal) {
+      errorMsgIn.setValue("Credit does not match.\nAdding new entry...");
       creditCell = specSheet.getRange(targetRow, ccolWithCardType); //reset to prev target row
 
-      dateCell.setValue(date); //set date
       brokeDownCostCell.setValue(amountInVal); //set cost
       totCostCell.setValue(amountInVal); //set total cost the same as cost
       inTypeCell.setValue(incomeNoteTypeVal); //set exp type as current as it is not N/A
       creditCell.setValue(inCreditTypeVal); //set credit type
     }
+    else { //exact same entry with a new cost
+      //update remaining cells to new target row
+      errorMsgIn.setValue("Reimb and credit match.\nUpdating existing entry...");
+      dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
+      brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
+      totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
 
-    //update remaining cells to new target row
-    dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
-    brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
-    totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
+      brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
+      totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
+    }
 
     dateCell.setValue(date); //set date (force updates existing entry to recently modified date)
-    brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountInVal); //add onto existing formula
-    totCostCell.setValue(totCostCell.getValue() + amountInVal); //add onto existing total cost
   }
-
 
   let dropdownArr = specSheet.getRange(startRow, ccolWithInTypeNames, totalMonthLen, 1).getValues();
   dropdownArr.push("N/A"); //add N/A to dropdown list as by default it is not in the list
@@ -712,15 +720,92 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   return;
 }
 
+//updates reimb categories
+function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
+  let typeSheet = sheetConfig.typeSheet,
+  specSheet = sheetConfig.specSheet,
+  hideSheet = sheetConfig.hideSheet;
+
+  let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
+  let specRangeArr = findSpecMonthRange(hideSheet, chosenDate, monthEndRowListCol);
+  let targetSpecInRow = specRangeArr[0], //for spec
+  targetSpecOutRow = specRangeArr[0], //for spec
+  monthSpecEndRow = specRangeArr[1]; //for spec
+
+  //find cols with expense type names & reimb mark
+  errorMsgReimb.setValue("Finding columns...");
+  let checkOrResVal = checkOrResReimb.getValue();
+
+  //typeSheet columns (only add reimb)
+  let typeCol = findAddCol(typeSheet, null, "IN", checkOrResVal, "type"); // find typeSheet add col
+
+  // total cost columns
+  let totCostColOutSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResVal, "spec") + 2, //find reimb out col
+  totCostColInSpec = findAddCol(specSheet, null, "REIMB IN", checkOrResVal, "spec") + 2; //find reimb in col
+
+  // other reference columns
+  let dateColOutSpec = totCostColOutSpec - 2,
+  formulaColOutSpec = totCostColOutSpec - 1,
+  expTypeColOutSpec = totCostColOutSpec + 1, //expense type param ignored
+  reimbMarkColSpec = totCostColOutSpec + 3,
+  creditColOutSpec = totCostColOutSpec + 4;
+  let expTypeColInSpec = totCostColInSpec + 1, //reimb in has no reimb mark
+  formulaColInSpec = totCostColInSpec - 1,
+  dateColInSpec = totCostColInSpec - 2,
+  creditColInSpec = totCostColInSpec + 4;
+
+  //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  errorMsgReimb.setValue("Finding target rows...");
+  let inTypeList = specSheet.getRange(targetSpecInRow, expTypeColInSpec, monthSpecEndRow - targetSpecInRow + 1).getValues(),
+  outTypeList = specSheet.getRange(targetSpecOutRow, expTypeColOutSpec, monthSpecEndRow - targetSpecOutRow + 1).getValues();
+  let expType = nonReimbCell.getValue().split(": "); //get expense type from nonReimbCell
+
+  //find item to reimb from chosen entry (if it exists) for in reimbs
+  if (inTypeList.includes(expType[1])) {
+    for (let i = 0; i < inTypeList.length; i++) {
+      if (inTypeList[i] == expType[1]) {
+        targetSpecInRow = i;
+        break;
+      }
+    }
+  } else targetSpecInRow = findFirstBlankRow(specSheet, targetSpecInRow, monthSpecEndRow, totCostColInSpec); //first blank row set as target row
+
+  // out reimb definitely has entry (no need to check inclusion)
+  for (let i = 0; i < outTypeList.length; i++) {
+    if (outTypeList[i] == expType) {
+      targetSpecOutRow = i;
+      break;
+    }
+  }
+
+  //typeSheet rows (only add reimb)
+  let typeRow = findAddRow(typeSheet, chosenDate);
+
+  //add amount to typeSheet
+  errorMsgReimb.setValue("Adding amount & marking reimb...");
+  addMoney(typeRow, typeCol, expType[0], typeSheet);
+  specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
+  specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
+
+  specSheet.getRange(targetSpecInRow, formulaColInSpec).setValue(specSheet.getRange(targetSpecOutRow, formulaColOutSpec).getValue()); //copy formula over
+  specSheet.getRange(targetSpecInRow, creditColInSpec).setValue(specSheet.getRange(targetSpecOutRow, creditColOutSpec).getValue()); //copy credit over
+
+  specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(specSheet.getRange(targetSpecInRow, totCostColInSpec).getValue() + "+" + expType[0]); //add to total cost
+  specSheet.getRange(targetSpecInRow, expTypeColInSpec).setValue(expType[1]); //set exp type as current as it is not N/A
+  specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
+
+  return;
+}
+
 
 //----------miscellaneous----------//
-
 
 //Add amount to appropriate cell
 function addMoney(addRow, addCol, amount, typeSheet){
   let curEq = typeSheet.getRange(addRow, addCol).getFormula();
   if (curEq == "=0") typeSheet.getRange(addRow, addCol).setFormula(amount);
   else typeSheet.getRange(addRow, addCol).setFormula(curEq + "+" + amount);
+  return;
 }
 
 
