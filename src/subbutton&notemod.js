@@ -737,7 +737,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let checkOrResVal = checkOrResReimb.getValue();
 
   //typeSheet columns (only add reimb)
-  let typeCol = findAddCol(typeSheet, null, "IN", checkOrResVal, "type"); // find typeSheet add col
+  let typeCol = findAddCol(typeSheet, null, "REIMB IN", checkOrResVal, "type"); // find typeSheet add col
 
   // total cost columns
   let totCostColOutSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResVal, "spec") + 2, //find reimb out col
@@ -759,7 +759,8 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let inTypeList = specSheet.getRange(targetSpecInRow, expTypeColInSpec, monthSpecEndRow - targetSpecInRow + 1).getValues(),
   outTypeList = specSheet.getRange(targetSpecOutRow, expTypeColOutSpec, monthSpecEndRow - targetSpecOutRow + 1).getValues();
   let expType = nonReimbCell.getValue().split(": "); //get expense type from nonReimbCell
-
+  Logger.log("Expense type: " + expType[1]);
+  Logger.log("In type list: " + inTypeList);
   //find item to reimb from chosen entry (if it exists) for in reimbs
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
