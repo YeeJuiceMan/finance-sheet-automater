@@ -740,11 +740,12 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   //typeSheet columns (only add reimb)
   let typeCol = findAddCol(typeSheet, null, "REIMB IN", checkOrResVal, "type"); // find typeSheet add col
 
-  Logger.log("TypeSheet add col: " + typeCol);
-
   // total cost columns
   let totCostColOutSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResVal, "spec") + 2, //find reimb out col
   totCostColInSpec = findAddCol(specSheet, null, "REIMB IN", checkOrResVal, "spec") + 2; //find reimb in col
+
+  Logger.log("Total cost out col: " + totCostColOutSpec);
+  Logger.log("Total cost in col: " + totCostColInSpec);
 
   // other reference columns
   let dateColOutSpec = totCostColOutSpec - 2,
