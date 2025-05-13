@@ -732,7 +732,6 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   targetSpecOutRow = specRangeArr[0], //for spec
   monthSpecEndRow = specRangeArr[1]; //for spec
 
-  Logger.log("Month range:" + specRangeArr);
 
   //find cols with expense type names & reimb mark
   errorMsgReimb.setValue("Finding columns...");
@@ -740,6 +739,8 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
 
   //typeSheet columns (only add reimb)
   let typeCol = findAddCol(typeSheet, null, "REIMB IN", checkOrResVal, "type"); // find typeSheet add col
+
+  Logger.log("TypeSheet add col: " + typeCol);
 
   // total cost columns
   let totCostColOutSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResVal, "spec") + 2, //find reimb out col
