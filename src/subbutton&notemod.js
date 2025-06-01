@@ -744,9 +744,6 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let totCostColOutSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResVal, "spec") + 2, //find reimb out col
   totCostColInSpec = findAddCol(specSheet, null, "REIMB IN", checkOrResVal, "spec") + 2; //find reimb in col
 
-  Logger.log("Total cost out col: " + totCostColOutSpec);
-  Logger.log("Total cost in col: " + totCostColInSpec);
-
   // other reference columns
   let dateColOutSpec = totCostColOutSpec - 2,
   formulaColOutSpec = totCostColOutSpec - 1,
