@@ -1,5 +1,7 @@
 //----------global vars----------//
 
+//global date var (reimb uses values from the console sheet)
+const date = new Date(2025, 4, 31); //placeholder date to find the row; will be replaced with current date later
 
 //sheet obj config
 const spreadSheetConfig = {
@@ -200,9 +202,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          subButtonAct(usDayVal, usMonthEndRowListCol, usSheetConfig);
+          subButtonAct(date, usDayVal, usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") { //will be changed later
-          subButtonAct(twDayVal, twMonthEndRowListCol, twSheetConfig);
+          subButtonAct(date, twDayVal, twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgOut.setValue("Successfully added " + typeSheetOut.getValue() + " $" + amountOut.getValue() + ". Please input notes & press Green to continue.");
@@ -224,9 +226,9 @@ function onButtonTrigger(e) {
 
         if (typeSheetOut.getValue() == "US") {
           //setting up spec sheet modding (monthEndRowListCol is 5 in spec)
-          subModSpecSheet(new Date(), usMonthEndRowListCol, usSheetConfig);
+          subModSpecSheet(date, usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") { // will be changed later
-          subModSpecSheet(new Date(), twMonthEndRowListCol, twSheetConfig);
+          subModSpecSheet(date, twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgOut.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
@@ -247,9 +249,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetIn.getValue() == "US") {
-          addButtonAct(usMonthEndRowListCol, usSheetConfig);
+          addButtonAct(date, usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetIn.getValue() == "TW") {
-          addButtonAct(twMonthEndRowListCol, twSheetConfig);
+          addButtonAct(date, twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgIn.setValue("Successfully added " + typeSheetIn.getValue() + " $" + amountIn.getValue() + ". Please input notes & press Green to continue.");
@@ -271,9 +273,9 @@ function onButtonTrigger(e) {
         }
 
         if (typeSheetOut.getValue() == "US") {
-          addModSpecSheet(new Date(), usMonthEndRowListCol, usSheetConfig);
+          addModSpecSheet(date, usMonthEndRowListCol, usSheetConfig);
         } else if (typeSheetOut.getValue() == "TW") {
-          addModSpecSheet(new Date(), twMonthEndRowListCol, twSheetConfig);
+          addModSpecSheet(date, twMonthEndRowListCol, twSheetConfig);
         }
 
         errorMsgIn.setValue("Notes added to " + typeSheetOut.getValue() + ".");
@@ -327,11 +329,11 @@ function onButtonTrigger(e) {
 //----------button action----------//
 
 //adds out val to chosen cell given parameters
-function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
+function subButtonAct(date, dayVal, monthEndRowListCol, sheetConfig) {
 
   errorMsgOut.setValue("Finding rows...");
 
-  let today = new Date();
+  let today = date; //placeholder date to find the row; will be replaced with current date later
 
   let typeSheet = sheetConfig.typeSheet,
   specSheet = sheetConfig.specSheet;
@@ -390,11 +392,11 @@ function subButtonAct(dayVal, monthEndRowListCol, sheetConfig) {
 }
 
 //adds in val to chosen cell given parameters
-function addButtonAct(monthEndRowListCol, sheetConfig){
+function addButtonAct(date, monthEndRowListCol, sheetConfig){
 
   errorMsgIn.setValue("Finding rows...");
 
-  let today = new Date();
+  let today = date; //placeholder date to find the row; will be replaced with current date later
 
   let typeSheet = sheetConfig.typeSheet;
 
