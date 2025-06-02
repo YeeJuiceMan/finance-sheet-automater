@@ -763,8 +763,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let inTypeList = specSheet.getRange(targetSpecInRow, expTypeColInSpec, monthSpecEndRow - targetSpecInRow + 1).getValues(),
   outTypeList = specSheet.getRange(targetSpecOutRow, expTypeColOutSpec, monthSpecEndRow - targetSpecOutRow + 1).getValues();
   let expType = nonReimbCell.getValue().split(": "); //get expense type from nonReimbCell
-  Logger.log("Expense type: " + expType[1]);
-  Logger.log("In type list: " + outTypeList);
+  Logger.log("Expense type: " + expType);
   //find item to reimb from chosen entry (if it exists) for in reimbs
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
