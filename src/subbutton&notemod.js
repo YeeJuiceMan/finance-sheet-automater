@@ -457,25 +457,24 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
   let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColSpec + 3,
 
-  //create array of non-reimbed items w/ N/A as default
-  nonReimbArray = ["N/A"];
+  // //create array of non-reimbed items w/ N/A as default
+  // nonReimbArray = ["N/A"];
 
-  //adds into array where only non-reimbed items exist w/ their respective costs
-  errorMsgReimb.setValue("Finding non-reimb items...");
-  while (monthRowInd <= monthEndRow) {
-    if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank())
-      nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
-    monthRowInd++;
-  }
+  // //adds into array where only non-reimbed items exist w/ their respective costs
+  // errorMsgReimb.setValue("Finding non-reimb items...");
+  // while (monthRowInd <= monthEndRow) {
+  //   if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank())
+  //     nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
+  //   monthRowInd++;
+  // }
 
-  //revalidate nonReimbCell & nonReimbCostCell dropdown list
-  errorMsgReimb.setValue("Updating dropdown list...");
-  nonReimbCell.setValue("N/A");
-  nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
+  // //revalidate nonReimbCell & nonReimbCostCell dropdown list
+  // errorMsgReimb.setValue("Updating dropdown list...");
+  // nonReimbCell.setValue("N/A");
+  // nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
 
   //check if there's anything to reimb
-  if (nonReimbArray.length > 1) return true;
-  return false;
+  return reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
 }
 
 
@@ -504,6 +503,29 @@ function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, month
   return;
 }
 
+
+// revalidates dropdowns for reimb
+function reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
+  //create array of non-reimbed items w/ N/A as default
+  nonReimbArray = ["N/A"];
+
+  //adds into array where only non-reimbed items exist w/ their respective costs
+  errorMsgReimb.setValue("Finding non-reimb items...");
+  while (monthRowInd <= monthEndRow) {
+    if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank())
+      nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
+    monthRowInd++;
+  }
+
+  //revalidate nonReimbCell & nonReimbCostCell dropdown list
+  errorMsgReimb.setValue("Updating dropdown list...");
+  nonReimbCell.setValue("N/A");
+  nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
+
+  //check if there's anything to reimb
+  if (nonReimbArray.length > 1) return true;
+  return false;
+}
 
 //----------spec sheet mods----------//
 
@@ -732,16 +754,16 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
 
   let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
   let specRangeArr = findSpecMonthRange(hideSheet, chosenDate, monthEndRowListCol);
-  Logger.log("Spec range array: " + specRangeArr);
+  // Logger.log("Spec range array: " + specRangeArr);
   let targetSpecInRow = specRangeArr[0], //for spec
   targetSpecOutRow = specRangeArr[0], //for spec
   monthSpecEndRow = specRangeArr[1]; //for spec
 
-  //find cols with expense type names & reimb mark
+  // find cols with expense type names & reimb mark
   errorMsgReimb.setValue("Finding columns...");
   let checkOrResVal = checkOrResReimb.getValue();
 
-  //typeSheet columns (only add reimb)
+  // typeSheet columns (only add reimb)
   let typeCol = findAddCol(typeSheet, null, "REIMB IN", checkOrResVal, "type"); // find typeSheet add col
 
   // total cost columns
@@ -759,13 +781,14 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   dateColInSpec = totCostColInSpec - 2,
   creditColInSpec = totCostColInSpec + 2;
 
-  //checks if there is space in specific category to add entry; if not extend & set target row to last row
+  // checks if there is space in specific category to add entry; if not extend & set target row to last row
   errorMsgReimb.setValue("Finding target rows...");
   let inTypeList = specSheet.getRange(targetSpecInRow, expTypeColInSpec, monthSpecEndRow - targetSpecInRow + 1).getValues(),
   outTypeList = specSheet.getRange(targetSpecOutRow, expTypeColOutSpec, monthSpecEndRow - targetSpecOutRow + 1).getValues();
   let expType = nonReimbCell.getValue().split(": "); //get expense type from nonReimbCell
-  Logger.log("Expense type: " + expType);
-  //find item to reimb from chosen entry (if it exists) for in reimbs
+  // Logger.log("Expense type: " + expType);
+
+  // find item to reimb from chosen entry (if it exists) for in reimbs
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
       if (inTypeList[i] == expType[1]) {
@@ -783,28 +806,30 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
     }
   }
 
-  //typeSheet rows (only add reimb)
+  // typeSheet rows (only add reimb)
   let typeRow = findAddRow(typeSheet, chosenDate);
 
-  //add amount to typeSheet
+  // add amount to typeSheet
   errorMsgReimb.setValue("Adding amount & marking reimb...");
   addMoney(typeRow, typeCol, expType[0], typeSheet);
   specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
   specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
-  Logger.log("Reimb mark range at: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getA1Notation());
-  Logger.log("Reimb mark set to: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getValue());
+  // Logger.log("Reimb mark range at: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getA1Notation());
+  // Logger.log("Reimb mark set to: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getValue());
 
   specSheet.getRange(targetSpecInRow, formulaColInSpec).setValue(specSheet.getRange(targetSpecOutRow, formulaColOutSpec).getValue()); //copy formula over
   specSheet.getRange(targetSpecInRow, creditColInSpec).setValue(specSheet.getRange(targetSpecOutRow, creditColOutSpec).getValue()); //copy credit over
-  Logger.log("Reimb formula range at: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getA1Notation());
-  Logger.log("Reimb credit range at: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getA1Notation());
-  Logger.log("Reimb formula set to: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getValue());
-  Logger.log("Reimb credit set to: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getValue());
+  // Logger.log("Reimb formula range at: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getA1Notation());
+  // Logger.log("Reimb credit range at: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getA1Notation());
+  // Logger.log("Reimb formula set to: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getValue());
+  // Logger.log("Reimb credit set to: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getValue());
 
   specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(expType[0]); //add to total cost
   specSheet.getRange(targetSpecInRow, expTypeColInSpec).setValue(expType[1]); //set exp type as current as it is not N/A
   specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
 
+  // revalidate dropdowns
+  reimbRevalidateDropdowns(specRangeArr[0], reimbMarkColSpec, totCostColOutSpec, expTypeColOutSpec, errorMsgReimb, specSheet);
 
   return;
 }
