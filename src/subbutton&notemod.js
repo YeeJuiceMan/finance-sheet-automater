@@ -455,7 +455,7 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
   errorMsgReimb.setValue("Finding columns...");
   let totCostColSpec = findAddCol(specSheet, null, "REIMB OUT", checkOrResReimb.getValue(), "spec") + 2; //expense type param ignored
   let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
-  reimbMarkColSpec = totCostColSpec + 3,
+  reimbMarkColSpec = totCostColSpec + 3;
 
   // //create array of non-reimbed items w/ N/A as default
   // nonReimbArray = ["N/A"];
@@ -508,7 +508,7 @@ function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, month
 // revalidates dropdowns for reimb
 function reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
   //create array of non-reimbed items w/ N/A as default
-  nonReimbArray = ["N/A"];
+  let nonReimbArray = ["N/A"];
 
   //adds into array where only non-reimbed items exist w/ their respective costs
   errorMsgReimb.setValue("Finding non-reimb items...");
