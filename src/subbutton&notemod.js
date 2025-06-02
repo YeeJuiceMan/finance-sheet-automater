@@ -278,7 +278,7 @@ function onButtonTrigger(e) {
           addModSpecSheet(date, twMonthEndRowListCol, twSheetConfig);
         }
 
-        errorMsgIn.setValue("Notes added to " + typeSheetOut.getValue() + ".");
+        errorMsgIn.setValue("Specifics added to " + typeSheetOut.getValue() + ".");
         errorMsgIn.setBackground("#93c47d");
         activeCell.setValue(false);
         return;
@@ -790,13 +790,21 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   addMoney(typeRow, typeCol, expType[0], typeSheet);
   specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
   specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
+  Logger.log("Reimb date set to: " + specSheet.getRange(targetSpecOutRow, dateColOutSpec).getValue());
+  Logger.log("Reimb mark range at: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getA1Notation());
+  Logger.log("Reimb mark set to: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getValue());
 
   specSheet.getRange(targetSpecInRow, formulaColInSpec).setValue(specSheet.getRange(targetSpecOutRow, formulaColOutSpec).getValue()); //copy formula over
   specSheet.getRange(targetSpecInRow, creditColInSpec).setValue(specSheet.getRange(targetSpecOutRow, creditColOutSpec).getValue()); //copy credit over
+  Logger.log("Reimb formula range at: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getA1Notation());
+  Logger.log("Reimb credit range at: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getA1Notation());
+  Logger.log("Reimb formula set to: " + specSheet.getRange(targetSpecInRow, formulaColInSpec).getValue());
+  Logger.log("Reimb credit set to: " + specSheet.getRange(targetSpecInRow, creditColInSpec).getValue());
 
-  specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(specSheet.getRange(targetSpecInRow, totCostColInSpec).getValue() + "+" + expType[0]); //add to total cost
+  specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(expType[0]); //add to total cost
   specSheet.getRange(targetSpecInRow, expTypeColInSpec).setValue(expType[1]); //set exp type as current as it is not N/A
   specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
+
 
   return;
 }
