@@ -474,7 +474,7 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
   // nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
 
   //check if there's anything to reimb
-  let anyReimbs = reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
+  let anyReimbs = reimbRevalidateDropdowns(monthRowInd, monthEndRow, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
   return anyReimbs;
 }
 
@@ -506,7 +506,7 @@ function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, month
 
 
 // revalidates dropdowns for reimb
-function reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
+function reimbRevalidateDropdowns(monthRowInd, monthEndRowreimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
   //create array of non-reimbed items w/ N/A as default
   let nonReimbArray = ["N/A"];
 
@@ -830,7 +830,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
 
   // revalidate dropdowns
-  reimbRevalidateDropdowns(specRangeArr[0], reimbMarkColSpec, totCostColOutSpec, expTypeColOutSpec, errorMsgReimb, specSheet);
+  reimbRevalidateDropdowns(specRangeArr[0], monthSpecEndRow, reimbMarkColSpec, totCostColOutSpec, expTypeColOutSpec, errorMsgReimb, specSheet);
 
   return;
 }
