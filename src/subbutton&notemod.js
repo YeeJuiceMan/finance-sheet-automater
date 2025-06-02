@@ -474,7 +474,8 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
   // nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
 
   //check if there's anything to reimb
-  return reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
+  let anyReimbs = reimbRevalidateDropdowns(monthRowInd, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
+  return anyReimbs;
 }
 
 
