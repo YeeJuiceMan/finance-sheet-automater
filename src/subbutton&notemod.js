@@ -732,6 +732,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
 
   let chosenDate = new Date(reimbYear.getValue(), reimbMonth.getValue() - 1);
   let specRangeArr = findSpecMonthRange(hideSheet, chosenDate, monthEndRowListCol);
+  Logger.log("Spec range array: " + specRangeArr);
   let targetSpecInRow = specRangeArr[0], //for spec
   targetSpecOutRow = specRangeArr[0], //for spec
   monthSpecEndRow = specRangeArr[1]; //for spec
@@ -752,11 +753,11 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   formulaColOutSpec = totCostColOutSpec - 1,
   expTypeColOutSpec = totCostColOutSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColOutSpec + 3,
-  creditColOutSpec = totCostColOutSpec + 4;
+  creditColOutSpec = totCostColOutSpec + 2;
   let expTypeColInSpec = totCostColInSpec + 1, //reimb in has no reimb mark
   formulaColInSpec = totCostColInSpec - 1,
   dateColInSpec = totCostColInSpec - 2,
-  creditColInSpec = totCostColInSpec + 4;
+  creditColInSpec = totCostColInSpec + 2;
 
   //checks if there is space in specific category to add entry; if not extend & set target row to last row
   errorMsgReimb.setValue("Finding target rows...");
