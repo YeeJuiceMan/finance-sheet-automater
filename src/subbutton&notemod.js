@@ -506,7 +506,7 @@ function addRevalidateDropdowns(today, addRow, addCol, addColSpec, amount, month
 
 
 // revalidates dropdowns for reimb
-function reimbRevalidateDropdowns(monthRowInd, monthEndRowreimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
+function reimbRevalidateDropdowns(monthRowInd, monthEndRow, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet) {
   //create array of non-reimbed items w/ N/A as default
   let nonReimbArray = ["N/A"];
 
