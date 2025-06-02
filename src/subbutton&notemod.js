@@ -391,6 +391,7 @@ function subButtonAct(date, dayVal, monthEndRowListCol, sheetConfig) {
   return;
 }
 
+
 //adds in val to chosen cell given parameters
 function addButtonAct(date, monthEndRowListCol, sheetConfig){
 
@@ -722,6 +723,7 @@ function addModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   return;
 }
 
+
 //updates reimb categories
 function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let typeSheet = sheetConfig.typeSheet,
@@ -733,7 +735,6 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   let targetSpecInRow = specRangeArr[0], //for spec
   targetSpecOutRow = specRangeArr[0], //for spec
   monthSpecEndRow = specRangeArr[1]; //for spec
-
 
   //find cols with expense type names & reimb mark
   errorMsgReimb.setValue("Finding columns...");
@@ -763,7 +764,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   outTypeList = specSheet.getRange(targetSpecOutRow, expTypeColOutSpec, monthSpecEndRow - targetSpecOutRow + 1).getValues();
   let expType = nonReimbCell.getValue().split(": "); //get expense type from nonReimbCell
   Logger.log("Expense type: " + expType[1]);
-  Logger.log("In type list: " + inTypeList);
+  Logger.log("In type list: " + outTypeList);
   //find item to reimb from chosen entry (if it exists) for in reimbs
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
@@ -776,7 +777,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
 
   // out reimb definitely has entry (no need to check inclusion)
   for (let i = 0; i < outTypeList.length; i++) {
-    if (outTypeList[i] == expType) {
+    if (outTypeList[i] == expType[1]) {
       targetSpecOutRow = i;
       break;
     }
@@ -1413,7 +1414,7 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
         if (tildeCheck == "~") {
           //tilde; hence not reimbed
           specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(false);
-        } 
+        }
         else {
           //not in reimb column or alr reimbed
           specSheet.getRange(sheetInd, ccolWithReimbMark).setValue(true);
@@ -1461,7 +1462,7 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
       specSheet.getRange(sheetInd, ccolWithCardType).setValue(tempCardEntry);
       noteInd++;
       sheetInd++;
-    } 
+    }
     else {
       //skip empty lines
       noteInd++;
