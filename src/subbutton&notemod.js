@@ -769,7 +769,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   if (inTypeList.includes(expType[1])) {
     for (let i = 0; i < inTypeList.length; i++) {
       if (inTypeList[i] == expType[1]) {
-        targetSpecInRow = i;
+        targetSpecInRow += i;
         break;
       }
     }
@@ -778,7 +778,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   // out reimb definitely has entry (no need to check inclusion)
   for (let i = 0; i < outTypeList.length; i++) {
     if (outTypeList[i] == expType[1]) {
-      targetSpecOutRow = i;
+      targetSpecOutRow += i;
       break;
     }
   }
@@ -791,7 +791,6 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   addMoney(typeRow, typeCol, expType[0], typeSheet);
   specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
   specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
-  Logger.log("Reimb date set to: " + specSheet.getRange(targetSpecOutRow, dateColOutSpec).getValue());
   Logger.log("Reimb mark range at: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getA1Notation());
   Logger.log("Reimb mark set to: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getValue());
 
@@ -1073,7 +1072,7 @@ function monthRowFinder(start, end, today) {
 //finds first blank row in a given range of rows
 function findFirstBlankRow(sheet, startRow, endRow, col) {
   while (startRow <= endRow) {
-    Logger.log(startRow + " " + endRow);
+    //Logger.log(startRow + " " + endRow);
     let mid = Math.floor((startRow + endRow) / 2);
     if (sheet.getRange(mid, col).isBlank()) {
       if (mid - 1 >= startRow && sheet.getRange(mid - 1, col).isBlank()) endRow = mid - 1; //if the row before is blank & is within range, set new end row
