@@ -1,4 +1,5 @@
 src/.clasp.json
+.clasp.json
 src/appsscript.json
 push_script.ps1
 pushScript.sh
