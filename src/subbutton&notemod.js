@@ -2,7 +2,6 @@
 
 //global date var (reimb uses values from the console sheet)
 const date = new Date(2025,6,31); //placeholder date to find the row; will be replaced with current date later
-
 //sheet obj config
 const spreadSheetConfig = {
   get spreadsheet() {
