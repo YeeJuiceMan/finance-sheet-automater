@@ -25,6 +25,11 @@ const twSheetConfig = new sheetConfig(mainSpreadSheet.getSheetByName("College Sa
                                       mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics"),
                                       mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"));
 
+//month update var
+const updateYearVal = consoleSheet.getRange("I22:I23"),
+updateMonthVal = consoleSheet.getRange("I24:I25"),
+updateVerify = consoleSheet.getRange("I26:I27");
+
 //out var
 const typeSheetOut = consoleSheet.getRange("B2:C3"),
 checkOrResOut = consoleSheet.getRange("C5:C6"),
@@ -188,7 +193,7 @@ function onButtonTrigger(e) {
     Logger.log("Button pressed: " + reference + " " + redOutButton.getA1Notation() + " " + activeSheetName + " " + consoleSheet.getName() + " " + activeVal);
     switch (reference){
       case redOutButton.getA1Notation(): //red out
-      Logger.log("Button pressed: " + redOutButton.getA1Notation());
+        Logger.log("Button pressed: " + redOutButton.getA1Notation());
         errorMsgOut.setValue("...");
         errorMsgOut.setBackground("#fbbc04");
 
@@ -315,6 +320,18 @@ function onButtonTrigger(e) {
 
         errorMsgReimb.setValue("Item reimbed.");
         errorMsgReimb.setBackground("#93c47d");
+        activeCell.setValue(false);
+        return;
+
+      case updateVerify.getA1Notation():
+        let yearVal = updateYearVal.getValue(),
+        monthVal = updateMonthVal.getValue();
+        if (yearVal != "CUR" && monthVal != "CUR") {
+          date = new Date(yearVal, monthVal - 1, 31);
+        } else {
+          updateYearVal.setValue("CUR");
+          updateMonthVal.setValue("CUR");
+        }
         activeCell.setValue(false);
         return;
 
@@ -813,7 +830,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
   errorMsgReimb.setValue("Adding amount & marking reimb...");
   addMoney(typeRow, typeCol, expType[0], typeSheet);
   specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).setValue(true); //mark reimb as true (assuming entire thing paid in full ALWAYS)
-  specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(new Date()); //set reimb date (force updates existing entry to recently modified date)
+  specSheet.getRange(targetSpecOutRow, dateColOutSpec).setValue(date); //set reimb date (force updates existing entry to recently modified date)
   // Logger.log("Reimb mark range at: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getA1Notation());
   // Logger.log("Reimb mark set to: " + specSheet.getRange(targetSpecOutRow, reimbMarkColSpec).getValue());
 
@@ -826,7 +843,7 @@ function alrReimbModSpecSheet(monthEndRowListCol, sheetConfig) {
 
   specSheet.getRange(targetSpecInRow, totCostColInSpec).setValue(expType[0]); //add to total cost
   specSheet.getRange(targetSpecInRow, expTypeColInSpec).setValue(expType[1]); //set exp type as current as it is not N/A
-  specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(new Date()); //set reimbed date (force updates existing entry to recently modified date)
+  specSheet.getRange(targetSpecInRow, dateColInSpec).setValue(date); //set reimbed date (force updates existing entry to recently modified date)
 
   // revalidate dropdowns
   reimbRevalidateDropdowns(specRangeArr[0], monthSpecEndRow, reimbMarkColSpec, totCostColOutSpec, expTypeColOutSpec, errorMsgReimb, specSheet);
