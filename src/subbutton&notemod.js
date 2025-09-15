@@ -328,10 +328,12 @@ function onButtonTrigger(e) {
         monthVal = updateMonthVal.getValue();
         if (yearVal != "CUR" && monthVal != "CUR") {
           date = new Date(yearVal, monthVal - 1, 31);
+          Logger.log(date);
         } else {
           updateYearVal.setValue("CUR");
           updateMonthVal.setValue("CUR");
           date = new Date();
+          Logger.log(date);
         }
         activeCell.setValue(false);
         return;
