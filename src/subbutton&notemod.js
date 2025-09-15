@@ -190,7 +190,7 @@ function onButtonTrigger(e) {
 
   //console buttons
   if (activeVal == true && activeSheetName == consoleSheet.getName()) {
-    Logger.log("Button pressed: " + reference + " " + redOutButton.getA1Notation() + " " + activeSheetName + " " + consoleSheet.getName() + " " + activeVal);
+    Logger.log("Button pressed: " + reference + " " + updateVerify.getA1Notation() + " " + activeSheetName + " " + consoleSheet.getName() + " " + activeVal);
     switch (reference){
       case redOutButton.getA1Notation(): //red out
         Logger.log("Button pressed: " + redOutButton.getA1Notation());
