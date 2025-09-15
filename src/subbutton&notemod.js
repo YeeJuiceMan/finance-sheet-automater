@@ -327,7 +327,7 @@ function onButtonTrigger(e) {
         let yearVal = updateYearVal.getValue(),
         monthVal = updateMonthVal.getValue();
         if (yearVal != "CUR" && monthVal != "CUR") {
-          date = new Date(yearVal, monthVal - 1, 31);
+          date = new Date(yearVal, monthVal - 1, 28);
           Logger.log(date);
         } else {
           updateYearVal.setValue("CUR");
