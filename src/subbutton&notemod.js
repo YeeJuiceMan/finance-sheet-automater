@@ -1,7 +1,6 @@
 //----------global vars----------//
 
 //global date var (reimb uses values from the console sheet)
-var date = new Date();//2025,6,31); //placeholder date to find the row; will be replaced with current date later
 //sheet obj config
 const spreadSheetConfig = {
   get spreadsheet() {
@@ -28,7 +27,9 @@ const twSheetConfig = new sheetConfig(mainSpreadSheet.getSheetByName("College Sa
 //month update var
 const updateYearVal = consoleSheet.getRange("I22"),
 updateMonthVal = consoleSheet.getRange("I24"),
-updateVerify = consoleSheet.getRange("I26");
+updateVerify = consoleSheet.getRange("I26"),
+chosenDate = consoleSheet.getRange("H28");
+var date = chosenDate.getValue();//2025,6,31); //placeholder date to find the row; will be replaced with current date later
 
 //out var
 const typeSheetOut = consoleSheet.getRange("B2:C3"),
@@ -328,11 +329,13 @@ function onButtonTrigger(e) {
         monthVal = updateMonthVal.getValue();
         if (yearVal != "CUR" && monthVal != "CUR") {
           date = new Date(yearVal, monthVal - 1, 28);
+          chosenDate.setValue(date);
           Logger.log(date);
         } else {
           updateYearVal.setValue("CUR");
           updateMonthVal.setValue("CUR");
           date = new Date();
+          chosenDate.setValue(date);
           Logger.log(date);
         }
         activeCell.setValue(false);
