@@ -351,7 +351,7 @@ function onButtonTrigger(e) {
 function subButtonAct(date, dayVal, monthEndRowListCol, sheetConfig) {
 
   errorMsgOut.setValue("Finding rows...");
-
+  Logger.log("Date in sub button: " + date);
   let today = date; //placeholder date to find the row; will be replaced with current date later
 
   let typeSheet = sheetConfig.typeSheet,
