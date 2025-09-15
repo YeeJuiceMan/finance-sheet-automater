@@ -26,9 +26,9 @@ const twSheetConfig = new sheetConfig(mainSpreadSheet.getSheetByName("College Sa
                                       mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"));
 
 //month update var
-const updateYearVal = consoleSheet.getRange("I22:I23"),
-updateMonthVal = consoleSheet.getRange("I24:I25"),
-updateVerify = consoleSheet.getRange("I26:I27");
+const updateYearVal = consoleSheet.getRange("I22"),
+updateMonthVal = consoleSheet.getRange("I24"),
+updateVerify = consoleSheet.getRange("I26");
 
 //out var
 const typeSheetOut = consoleSheet.getRange("B2:C3"),
