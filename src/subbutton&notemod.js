@@ -331,6 +331,7 @@ function onButtonTrigger(e) {
         } else {
           updateYearVal.setValue("CUR");
           updateMonthVal.setValue("CUR");
+          date = new Date();
         }
         activeCell.setValue(false);
         return;
