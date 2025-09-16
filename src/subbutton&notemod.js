@@ -1507,6 +1507,8 @@ function customNoteToSheets(date, typeSheet, specSheet, hideSheet, addRow, addCo
           case "@C1":
             tempCardEntry = "CAPONE SAVOR";
             break;
+          case "@AE":
+            tempCardEntry = "AMEX BCE"
           default:
             tempCardEntry = "N/A";
             break;
