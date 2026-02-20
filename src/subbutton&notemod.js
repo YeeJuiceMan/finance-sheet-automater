@@ -479,22 +479,6 @@ function checkReimb(monthEndRowListCol, sheetConfig) {
   let expTypeColSpec = totCostColSpec + 1, //expense type param ignored
   reimbMarkColSpec = totCostColSpec + 3;
 
-  // //create array of non-reimbed items w/ N/A as default
-  // nonReimbArray = ["N/A"];
-
-  // //adds into array where only non-reimbed items exist w/ their respective costs
-  // errorMsgReimb.setValue("Finding non-reimb items...");
-  // while (monthRowInd <= monthEndRow) {
-  //   if (!specSheet.getRange(monthRowInd, reimbMarkColSpec).getValue() && !specSheet.getRange(monthRowInd, totCostColSpec).isBlank())
-  //     nonReimbArray.push(specSheet.getRange(monthRowInd, totCostColSpec).getValue() + ": " + specSheet.getRange(monthRowInd, expTypeColSpec).getValue());
-  //   monthRowInd++;
-  // }
-
-  // //revalidate nonReimbCell & nonReimbCostCell dropdown list
-  // errorMsgReimb.setValue("Updating dropdown list...");
-  // nonReimbCell.setValue("N/A");
-  // nonReimbCell.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(nonReimbArray, true).build());
-
   //check if there's anything to reimb
   let anyReimbs = reimbRevalidateDropdowns(monthRowInd, monthEndRow, reimbMarkColSpec, totCostColSpec, expTypeColSpec, errorMsgReimb, specSheet);
   return anyReimbs;
@@ -626,12 +610,12 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
   }
   else { //possible existing expense type; reimb is assumed to be false (if it is in reimb to begin with)
     errorMsgOut.setValue("Note is not N/A.\nFinding existing entry...");
-    let newTargetRow = startRow;
-    while (expenseNoteTypeVal != specSheet.getRange(newTargetRow, ccolWithExpTypeNames).getValue() && newTargetRow <= lastRow) newTargetRow++; //iterate to find the right row with the same exp type
+    let existTargetRow = startRow;
+    while (expenseNoteTypeVal != specSheet.getRange(existTargetRow, ccolWithExpTypeNames).getValue() && existTargetRow <= lastRow) existTargetRow++; //iterate to find the right row with the same exp type
 
     //re-find the range with the new target row for comparisons
-    creditCell = specSheet.getRange(newTargetRow, ccolWithCardType),
-    reimbCell = specSheet.getRange(newTargetRow, ccolWithReimbMark);
+    creditCell = specSheet.getRange(existTargetRow, ccolWithCardType),
+    reimbCell = specSheet.getRange(existTargetRow, ccolWithReimbMark);
 
     //extra conditions if the reimb or the credit type differs from what's entered; add to original target row as new entry
     if ((needOrWantOrReimbVal == "REIMB OUT" && reimbCell.getValue()) || (creditCell.getValue() != outCreditTypeVal)) {
@@ -643,15 +627,18 @@ function subModSpecSheet(date, monthEndRowListCol, sheetConfig) {
       brokeDownCostCell.setValue(amountOutVal); //set cost
       totCostCell.setValue(amountOutVal); //set total cost the same as cost
       creditCell.setValue(outCreditTypeVal); //set credit type
+
       if (needOrWantOrReimbVal == "REIMB OUT") reimbCell.setValue(false); //if in reimb set default reimb to false (will set true by reimb button)
-      expTypeCell.setValue(expenseNoteTypeVal); //set exp type as current as it is not N/A
+
+      if (creditCell.getValue() != outCreditTypeVal) expTypeCell.setValue(expenseNoteTypeVal + " (credit: " + outCreditTypeVal + ")"); //mark new credit if diff credit
+      expTypeCell.setValue(expenseNoteTypeVal); //set exp type as current as it is not N/A w/ diff reimb marker
     }
     else { //exact same entry with a new cost
       //update remaining cells to new target row
       errorMsgOut.setValue("Reimb and credit match.\nUpdating existing entry...");
-      dateCell = specSheet.getRange(newTargetRow, ccolWithDate),
-      brokeDownCostCell = specSheet.getRange(newTargetRow, ccolWithBrokeDownCost),
-      totCostCell = specSheet.getRange(newTargetRow, ccolWithExpTotCost);
+      dateCell = specSheet.getRange(existTargetRow, ccolWithDate),
+      brokeDownCostCell = specSheet.getRange(existTargetRow, ccolWithBrokeDownCost),
+      totCostCell = specSheet.getRange(existTargetRow, ccolWithExpTotCost);
 
       brokeDownCostCell.setValue(brokeDownCostCell.getValue() + "+" + amountOutVal); //add onto existing formula
       totCostCell.setValue(totCostCell.getValue() + amountOutVal); //add onto existing total cost
@@ -1086,12 +1073,12 @@ function entryHiding(activeCell, activeVal, endRowOrColListCol, rowOrCol, errorM
 
     rowOrColRange = lastRowOrColForMonthOrCategory - firstRowOrColForMonthOrCategory + 1; //get the range/number of rows or cols to hide
 
-    if (activeVal == true) {
+    if (activeVal) {
       errorMsgHide.setValue("Hiding...");
       if (rowOrCol == "row") sheetConfig.specSheet.hideRows(firstRowOrColForMonthOrCategory, rowOrColRange);
       else if (rowOrCol == "col") sheetConfig.specSheet.hideColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
     }
-    else if (activeVal == false) {
+    else if (!activeVal) {
       errorMsgHide.setValue("Showing...");
       if (rowOrCol == "row") sheetConfig.specSheet.showRows(firstRowOrColForMonthOrCategory, rowOrColRange);
       else if (rowOrCol == "col") sheetConfig.specSheet.showColumns(firstRowOrColForMonthOrCategory, rowOrColRange);
