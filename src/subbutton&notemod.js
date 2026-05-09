@@ -28,7 +28,7 @@ const twSheetConfig = new sheetConfig(mainSpreadSheet.getSheetByName("College Sa
 const updateYearVal = consoleSheet.getRange("I23"),
 updateMonthVal = consoleSheet.getRange("I25"),
 updateVerify = consoleSheet.getRange("I27"),
-chosenDate = consoleSheet.getRange("H28");
+chosenDate = consoleSheet.getRange("H29");
 var date = chosenDate.getValue();//2025,6,31); //placeholder date to find the row; will be replaced with current date later
 
 //out var
