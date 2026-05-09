@@ -25,9 +25,9 @@ const twSheetConfig = new sheetConfig(mainSpreadSheet.getSheetByName("College Sa
                                       mainSpreadSheet.getSheetByName("College Savings 3.0 (TW) Specifics Hide Menu"));
 
 //month update var
-const updateYearVal = consoleSheet.getRange("I22"),
-updateMonthVal = consoleSheet.getRange("I24"),
-updateVerify = consoleSheet.getRange("I26"),
+const updateYearVal = consoleSheet.getRange("I23"),
+updateMonthVal = consoleSheet.getRange("I25"),
+updateVerify = consoleSheet.getRange("I27"),
 chosenDate = consoleSheet.getRange("H28");
 var date = chosenDate.getValue();//2025,6,31); //placeholder date to find the row; will be replaced with current date later
 
